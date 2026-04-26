@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mart PK | Premium Wholesale Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4a017;
+            --gold-light: #f5c842;
+            --dark: #0f1923;
+            --dark2: #1a2535;
+            --green: #1a6b42;
+            --green-light: #22c55e;
+            --bg: #f4f6f0;
+            --card-bg: #ffffff;
+            --text: #1a2535;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --red: #dc2626;
+            --shadow: 0 12px 40px rgba(0,0,0,0.10);
+            --radius: 1.5rem;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── HERO HEADER ── */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 60%, var(--green) 100%);
+            padding: 2.5rem 1.5rem 3.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(212,160,23,0.2);
+            border: 1px solid rgba(212,160,23,0.5);
+            color: var(--gold-light);
+            padding: 0.35rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 0.6rem;
+        }
+        .hero h1 span { color: var(--gold-light); }
+        .hero p {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ── PASSWORD UNLOCK ── */
+        .unlock-card {
+            max-width: 480px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius);
+            padding: 1.4rem 1.6rem;
+        }
+        .unlock-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .unlock-row {
+            display: flex;
+            gap: 10px;
+        }
+        .unlock-row input {
+            flex: 1;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 60px;
+            padding: 0.7rem 1.2rem;
+            color: white;
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .unlock-row input::placeholder { color: rgba(255,255,255,0.35); }
+        .unlock-row input:focus { border-color: var(--gold-light); }
+        .unlock-btn {
+            background: var(--gold);
+            color: var(--dark);
+            border: none;
+            border-radius: 60px;
+            padding: 0 1.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .unlock-btn:hover { background: var(--gold-light); transform: scale(0.97); }
+
+        .unlock-success {
+            margin-top: 0.8rem;
+            text-align: center;
+            background: rgba(34,197,94,0.15);
+            border: 1px solid rgba(34,197,94,0.3);
+            color: #86efac;
+            padding: 0.6rem 1rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+        }
+
+        /* ── WAVE DIVIDER ── */
+        .wave {
+            display: block;
+            width: 100%;
+            height: 50px;
+            background: var(--dark2);
+            clip-path: ellipse(55% 100% at 50% 0%);
+            margin-top: -1px;
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main {
+            padding: 2rem 1.2rem 3rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── PRODUCT GRID ── */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.25s, box-shadow 0.25s;
+            border: 1px solid transparent;
+        }
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.14);
+            border-color: var(--gold);
+        }
+
+        /* ── IMAGE GALLERY / SLIDER ── */
+        .gallery-wrap {
+            position: relative;
+            height: 250px;
+            background: #eef2f3;
+            overflow: hidden;
+        }
+        .slides-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s ease;
+        }
+        .slides-track img {
+            min-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .gallery-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            z-index: 5;
+        }
+        .gallery-btn:hover { background: var(--gold); }
+        .gallery-btn.prev { left: 8px; }
+        .gallery-btn.next { right: 8px; }
+        .gallery-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 5;
+        }
+        .gallery-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .gallery-dots span.active { background: var(--gold-light); width: 18px; border-radius: 4px; }
+        .img-count-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 0.72rem;
+            padding: 3px 9px;
+            border-radius: 30px;
+            z-index: 5;
+        }
+
+        /* ── PRODUCT DETAILS ── */
+        .product-details { padding: 1.2rem 1.3rem; }
+
+        .product-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--dark);
+        }
+
+        .desc-box {
+            background: #f8fafc;
+            border-radius: 0.9rem;
+            padding: 0.8rem 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 0.9rem;
+        }
+        .desc-text { flex: 1; word-break: break-word; }
+        .copy-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .copy-btn:hover { background: var(--gold-light); }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+        .market-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--red);
+            text-decoration: line-through;
+            opacity: 0.8;
+        }
+
+        .special-box {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border: 1px dashed var(--gold);
+            border-radius: 1rem;
+            padding: 0.9rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .reveal-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--dark);
+            border: none;
+            padding: 9px 0;
+            width: 100%;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .reveal-btn:hover { transform: scale(0.98); opacity: 0.9; }
+        .special-price-show {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            flex: 1;
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 9px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            text-decoration: none;
+        }
+        .action-btn:hover { background: var(--green); }
+        .action-btn.whatsapp { background: #25d366; }
+        .action-btn.whatsapp:hover { background: #1ebe57; }
+
+        /* ── LOADING & EMPTY ── */
+        .loading-screen {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+        }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+        }
+        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
+
+        .error-box {
+            grid-column: 1/-1;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            color: var(--red);
+        }
+        .error-box code {
+            display: block;
+            background: #fff5f5;
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            color: #7f1d1d;
+            text-align: left;
+        }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--dark);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 9999;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 640px) {
+            .products-grid { grid-template-columns: 1fr; }
+            .hero { padding: 2rem 1rem 3rem; }
+            .unlock-card { padding: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-badge"><i class="fas fa-gem"></i> &nbsp;Premium Wholesale</div>
+    <h1>Mart <span>PK</span></h1>
+    <p>Exclusive products at unbeatable wholesale prices</p>
+
+    <div class="unlock-card">
+        <div class="unlock-label"><i class="fas fa-lock-open"></i> Enter password to unlock wholesale prices</div>
+        <div class="unlock-row">
+            <input type="password" id="passInput" placeholder="Password..." autocomplete="off">
+            <button class="unlock-btn" id="unlockBtn"><i class="fas fa-key"></i> Unlock</button>
+        </div>
+        <div id="unlockStatus"></div>
+    </div>
+</div>
+<div class="wave"></div>
+
+<!-- PRODUCTS -->
+<div class="main">
+    <div class="section-title"><i class="fas fa-boxes" style="color:var(--gold)"></i> Our Products</div>
+    <div id="productsGrid" class="products-grid">
+        <div class="loading-screen"><div class="spinner"></div><p>Loading products...</p></div>
+    </div>
+</div>
+
+<footer class="footer">
+    &copy; 2025 Mart PK &mdash; All Rights Reserved
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIG — صرف یہاں تبدیلی کریں
+// ─────────────────────────────────────────────
+const DB_URL = "https://mart-c4baa-default-rtdb.firebaseio.com/";
+const FIXED_PASSWORD = "786";
+
+// ─────────────────────────────────────────────
+let globalUnlocked = false;
+
+// Google Drive link converter
+function convertDriveLink(url) {
+    if (!url) return '';
+    // Single file: /file/d/ID/
+    const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileMatch) return `https://drive.google.com/uc?export=view&id=${fileMatch[1]}`;
+    // Thumbnail format already
+    if (url.includes('drive.google.com/uc')) return url;
+    return url;
+}
+
+// Fetch Google Drive FOLDER images via public folder embed
+async function fetchDriveFolderImages(url) {
+    const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+    if (!folderMatch) return null;
+    const folderId = folderMatch[1];
+    // Use Google Drive folder embed to list files
+    try {
+        const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=AIzaSyD-placeholder`;
+        // Fallback: use known embed approach
+        return { isFolderUrl: true, folderId };
+    } catch(e) {
+        return null;
+    }
+}
+
+// Smart image URL processor — handle all types
+async function processImageUrls(rawImages) {
+    if (!rawImages || !rawImages.length) return ['https://placehold.co/600x400?text=No+Image'];
+    
+    let result = [];
+    for (let url of rawImages) {
+        if (!url || !url.trim()) continue;
+        const trimmed = url.trim();
+        
+        // Google Drive FOLDER
+        if (trimmed.includes('drive.google.com') && trimmed.includes('/folders/')) {
+            const folderMatch = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+            if (folderMatch) {
+                // We'll fetch folder contents using public access
+                const folderImages = await fetchPublicDriveFolder(folderMatch[1]);
+                if (folderImages && folderImages.length) {
+                    result.push(...folderImages);
+                } else {
+                    // If fetch fails, add folder link as embed
+                    result.push({ type: 'folder', folderId: folderMatch[1], url: trimmed });
+                }
+            }
+        }
+        // Google Drive single file
+        else if (trimmed.includes('drive.google.com')) {
+            result.push(convertDriveLink(trimmed));
+        }
+        // Regular URL or base64
+        else {
+            result.push(trimmed);
+        }
+    }
+    return result.length ? result : ['https://placehold.co/600x400?text=No+Image'];
+}
+
+// Attempt to list public Google Drive folder files
+async function fetchPublicDriveFolder(folderId) {
+    try {
+        // Method: use the public folder embed feed
+        // Note: Only works if folder is set to "Anyone with link can view"
+        const proxyUrl = `https://drive.google.com/drive/folders/${folderId}`;
+        // We'll generate thumbnail URLs pattern (1-20 files attempt)
+        // Since we can't directly list without API key, we store the folder URL
+        // and display it as an embedded viewer
+        return null; // Will be handled in renderFolderEmbed
+    } catch(e) { return null; }
+}
+
+// Build gallery HTML for a product
+function buildGalleryHtml(cardId, images) {
+    if (!images || !images.length) {
+        return `<div class="gallery-wrap"><div class="slides-track"><img src="https://placehold.co/600x400?text=No+Image" alt="no image"></div></div>`;
+    }
+
+    let slides = '';
+    let dots = '';
+    images.forEach((img, i) => {
+        if (typeof img === 'object' && img.type === 'folder') {
+            // Folder embed
+            slides += `<iframe src="https://drive.google.com/embeddedfolderview?id=${img.folderId}#grid" style="min-width:100%;height:100%;border:none;flex-shrink:0;" loading="lazy"></iframe>`;
+        } else {
+            slides += `<img src="${img}" alt="product image" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Error'">`;
+        }
+        dots += `<span class="${i===0?'active':''}" data-idx="${i}" data-card="${cardId}"></span>`;
+    });
+
+    const navBtns = images.length > 1 ? `
+        <button class="gallery-btn prev" data-card="${cardId}"><i class="fas fa-chevron-left"></i></button>
+        <button class="gallery-btn next" data-card="${cardId}"><i class="fas fa-chevron-right"></i></button>
+        <div class="gallery-dots">${dots}</div>
+        <div class="img-count-badge"><i class="fas fa-images"></i> ${images.length}</div>
+    ` : '';
+
+    return `<div class="gallery-wrap" id="gallery-${cardId}">
+        <div class="slides-track" id="track-${cardId}">${slides}</div>
+        ${navBtns}
+    </div>`;
+}
+
+// Render all products
+async function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Loading products...</p></div>`;
+
+    try {
+        const res = await fetch(`${DB_URL}products.json`);
+        if (!res.ok) {
+            throw new Error(`Firebase Error ${res.status}: ${res.statusText}. Check Firebase rules.`);
+        }
+        const data = await res.json();
+
+        if (!data || Object.keys(data).length === 0) {
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i><p>No products yet. Check back soon!</p></div>`;
+            return;
+        }
+
+        let html = '';
+        const entries = Object.entries(data);
+
+        for (let [id, prod] of entries) {
+            const images = await processImageUrls(prod.images);
+            const galleryHtml = buildGalleryHtml(id, images);
+            
+            const firstImageUrl = typeof images[0] === 'string' ? images[0] : '#';
+
+            let specialHtml = globalUnlocked
+                ? `<div class="special-price-show"><i class="fas fa-tags"></i> Wholesale: Rs. ${Number(prod.specialPrice).toLocaleString()}</div>`
+                : `<button class="reveal-btn" data-id="${id}"><i class="fas fa-lock"></i> Tap to See Wholesale Price</button>`;
+
+            html += `
+            <div class="product-card" data-id="${id}">
+                ${galleryHtml}
+                <div class="product-details">
+                    <div class="product-title">${escapeHtml(prod.name || 'Product')}</div>
+                    <div class="desc-box">
+                        <span class="desc-text" id="desc-${id}">${escapeHtml(prod.desc || 'Premium quality product')}</span>
+                        <button class="copy-btn" onclick="copyDesc('${id}')"><i class="far fa-copy"></i> Copy</button>
+                    </div>
+                    <div class="price-row">
+                        <div class="market-price">Market: Rs. ${Number(prod.marketPrice).toLocaleString()}</div>
+                    </div>
+                    <div class="special-box" id="sbox-${id}">${specialHtml}</div>
+                    <div class="action-row">
+                        <a href="${firstImageUrl}" target="_blank" class="action-btn"><i class="fas fa-eye"></i> View</a>
+                        <a href="${firstImageUrl}" download class="action-btn"><i class="fas fa-download"></i> Save</a>
+                        <button class="action-btn whatsapp" onclick="shareWhatsApp('${id}','${escapeAttr(prod.name)}','${prod.marketPrice}')"><i class="fab fa-whatsapp"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        grid.innerHTML = html;
+        initGalleries();
+        attachRevealBtns();
+
+    } catch(e) {
+        console.error(e);
+        grid.innerHTML = `
+        <div class="error-box">
+            <i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:0.8rem;display:block;"></i>
+            <strong>Products could not load.</strong><br>
+            <small>Please fix Firebase Database Rules (see steps below).</small>
+            <code>
+Go to: Firebase Console → Your Project → Realtime Database → Rules<br><br>
+Change rules to:<br>
+{<br>
+&nbsp;&nbsp;"rules": {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;".read": true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;".write": false<br>
+&nbsp;&nbsp;}<br>
+}<br><br>
+Error: ${e.message}
+            </code>
+        </div>`;
+    }
+}
+
+// Slider logic
+function initGalleries() {
+    document.querySelectorAll('.product-card').forEach(card => {
+        const id = card.dataset.id;
+        const track = document.getElementById(`track-${id}`);
+        if (!track) return;
+        const slides = track.children;
+        if (slides.length <= 1) return;
+        let current = 0;
+
+        function goTo(n) {
+            current = (n + slides.length) % slides.length;
+            track.style.transform = `translateX(-${current * 100}%)`;
+            card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach((d, i) => {
+                d.classList.toggle('active', i === current);
+            });
+        }
+
+        const prev = card.querySelector('.gallery-btn.prev');
+        const next = card.querySelector('.gallery-btn.next');
+        if (prev) prev.addEventListener('click', () => goTo(current - 1));
+        if (next) next.addEventListener('click', () => goTo(current + 1));
+
+        card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach(dot => {
+            dot.addEventListener('click', () => goTo(parseInt(dot.dataset.idx)));
+        });
+
+        // Touch swipe
+        let startX = 0;
+        track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend', e => {
+            const diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+        }, { passive: true });
+    });
+}
+
+function attachRevealBtns() {
+    document.querySelectorAll('.reveal-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pass = document.getElementById('passInput').value;
+            if (pass === FIXED_PASSWORD) {
+                globalUnlocked = true;
+                document.getElementById('unlockStatus').innerHTML = '<div class="unlock-success"><i class="fas fa-check-circle"></i> Wholesale prices unlocked!</div>';
+                renderProducts();
+            } else {
+                showToast('❌ Wrong password!');
+            }
+        });
+    });
+}
+
+function copyDesc(id) {
+    const txt = document.getElementById(`desc-${id}`)?.innerText;
+    if (!txt) return;
+    navigator.clipboard.writeText(txt).then(() => showToast('📋 Description copied!'));
+}
+
+function shareWhatsApp(id, name, price) {
+    const msg = encodeURIComponent(`*${name}*\nMarket Price: Rs. ${price}\nFrom: Mart PK`);
+    window.open(`https://wa.me/?text=${msg}`, '_blank');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function checkUnlock() {
+    const val = document.getElementById('passInput').value;
+    if (val === FIXED_PASSWORD) {
+        globalUnlocked = true;
+        document.getElementById('unlockStatus').innerHTML = '<div class="unlock-success"><i class="fas fa-check-circle"></i> All wholesale prices are now visible!</div>';
+        showToast('✅ Prices unlocked!');
+        renderProducts();
+    } else if (val) {
+        showToast('❌ Wrong password!');
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str) {
+    return String(str||'').replace(/'/g, "\\'");
+}
+
+document.getElementById('unlockBtn').addEventListener('click', checkUnlock);
+document.getElementById('passInput').addEventListener('keypress', e => { if(e.key==='Enter') checkUnlock(); });
+
+renderProducts();
+</script>
+</body>
+</html>
