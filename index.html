@@ -6,6 +6,8 @@
     <title>Mart PK | Premium Wholesale Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- JSZip for Download All Images -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root {
             --gold: #d4a017;
@@ -169,6 +171,70 @@
             background: var(--border);
         }
 
+        /* ── SEARCH BAR ── */
+        .search-wrap {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+        .search-wrap i {
+            position: absolute;
+            left: 1.1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.9rem;
+            border: 2px solid var(--border);
+            border-radius: 60px;
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            background: white;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        }
+        .search-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 4px 20px rgba(212,160,23,0.15);
+        }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-clear {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--border);
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .search-clear:hover { background: var(--gold-light); color: var(--dark); }
+        .search-clear.visible { display: flex; }
+
+        /* No results state */
+        .no-results {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+        .no-results i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.25; display: block; }
+        .no-results h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--text); }
+        .no-results p { font-size: 0.88rem; }
+
         /* ── PRODUCT GRID ── */
         .products-grid {
             display: grid;
@@ -188,6 +254,9 @@
             transform: translateY(-6px);
             box-shadow: 0 20px 60px rgba(0,0,0,0.14);
             border-color: var(--gold);
+        }
+        .product-card[data-hidden="true"] {
+            display: none;
         }
 
         /* ── IMAGE GALLERY / SLIDER ── */
@@ -347,31 +416,38 @@
             gap: 6px;
         }
 
+        /* ── ACTION ROW ── */
         .action-row {
             display: flex;
             gap: 8px;
+            flex-wrap: wrap;
         }
         .action-btn {
             flex: 1;
+            min-width: 0;
             background: var(--dark);
             color: white;
             border: none;
-            padding: 9px;
+            padding: 9px 8px;
             border-radius: 40px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 5px;
             transition: 0.2s;
             font-family: 'DM Sans', sans-serif;
             text-decoration: none;
+            white-space: nowrap;
         }
         .action-btn:hover { background: var(--green); }
-        .action-btn.whatsapp { background: #25d366; }
+        .action-btn.whatsapp { background: #25d366; flex: 0 0 auto; padding: 9px 14px; }
         .action-btn.whatsapp:hover { background: #1ebe57; }
+        .action-btn.dl-all { background: var(--dark2); }
+        .action-btn.dl-all:hover { background: var(--green); }
+        .action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         /* ── LOADING & EMPTY ── */
         .loading-screen {
@@ -476,6 +552,14 @@
 <!-- PRODUCTS -->
 <div class="main">
     <div class="section-title"><i class="fas fa-boxes" style="color:var(--gold)"></i> Our Products</div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or description...">
+        <button class="search-clear" id="searchClear" title="Clear search"><i class="fas fa-times"></i></button>
+    </div>
+
     <div id="productsGrid" class="products-grid">
         <div class="loading-screen"><div class="spinner"></div><p>Loading products...</p></div>
     </div>
@@ -497,33 +581,37 @@ const FIXED_PASSWORD = "786";
 // ─────────────────────────────────────────────
 let globalUnlocked = false;
 
-// Google Drive link converter
-function convertDriveLink(url) {
-    if (!url) return '';
-    // Single file: /file/d/ID/
+// ── GOOGLE DRIVE LINK CONVERTER ──
+function getDriveFileId(url) {
     const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileMatch) return `https://drive.google.com/uc?export=view&id=${fileMatch[1]}`;
-    // Thumbnail format already
-    if (url.includes('drive.google.com/uc')) return url;
+    if (fileMatch) return fileMatch[1];
+    const ucMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (ucMatch) return ucMatch[1];
+    return null;
+}
+
+function convertDriveDisplayLink(url) {
+    if (!url) return '';
+    const id = getDriveFileId(url);
+    if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
     return url;
 }
 
-// Fetch Google Drive FOLDER images via public folder embed
-async function fetchDriveFolderImages(url) {
-    const folderMatch = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-    if (!folderMatch) return null;
-    const folderId = folderMatch[1];
-    // Use Google Drive folder embed to list files
-    try {
-        const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=AIzaSyD-placeholder`;
-        // Fallback: use known embed approach
-        return { isFolderUrl: true, folderId };
-    } catch(e) {
-        return null;
-    }
+function convertDriveDownloadLink(url) {
+    if (!url) return '';
+    const id = getDriveFileId(url);
+    if (id) return `https://drive.google.com/uc?export=download&id=${id}`;
+    return url;
 }
 
-// Smart image URL processor — handle all types
+// ── FETCH GOOGLE DRIVE FOLDER FILES ──
+async function fetchPublicDriveFolder(folderId) {
+    try {
+        return null; // Folder embed fallback
+    } catch(e) { return null; }
+}
+
+// ── SMART IMAGE URL PROCESSOR ──
 async function processImageUrls(rawImages) {
     if (!rawImages || !rawImages.length) return ['https://placehold.co/600x400?text=No+Image'];
     
@@ -536,19 +624,17 @@ async function processImageUrls(rawImages) {
         if (trimmed.includes('drive.google.com') && trimmed.includes('/folders/')) {
             const folderMatch = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
             if (folderMatch) {
-                // We'll fetch folder contents using public access
                 const folderImages = await fetchPublicDriveFolder(folderMatch[1]);
                 if (folderImages && folderImages.length) {
                     result.push(...folderImages);
                 } else {
-                    // If fetch fails, add folder link as embed
                     result.push({ type: 'folder', folderId: folderMatch[1], url: trimmed });
                 }
             }
         }
         // Google Drive single file
         else if (trimmed.includes('drive.google.com')) {
-            result.push(convertDriveLink(trimmed));
+            result.push(convertDriveDisplayLink(trimmed));
         }
         // Regular URL or base64
         else {
@@ -558,20 +644,10 @@ async function processImageUrls(rawImages) {
     return result.length ? result : ['https://placehold.co/600x400?text=No+Image'];
 }
 
-// Attempt to list public Google Drive folder files
-async function fetchPublicDriveFolder(folderId) {
-    try {
-        // Method: use the public folder embed feed
-        // Note: Only works if folder is set to "Anyone with link can view"
-        const proxyUrl = `https://drive.google.com/drive/folders/${folderId}`;
-        // We'll generate thumbnail URLs pattern (1-20 files attempt)
-        // Since we can't directly list without API key, we store the folder URL
-        // and display it as an embedded viewer
-        return null; // Will be handled in renderFolderEmbed
-    } catch(e) { return null; }
-}
+// ── STORE FOR DOWNLOAD: productId → {name, images[]} ──
+const productImageStore = {};
 
-// Build gallery HTML for a product
+// ── BUILD GALLERY HTML ──
 function buildGalleryHtml(cardId, images) {
     if (!images || !images.length) {
         return `<div class="gallery-wrap"><div class="slides-track"><img src="https://placehold.co/600x400?text=No+Image" alt="no image"></div></div>`;
@@ -581,7 +657,6 @@ function buildGalleryHtml(cardId, images) {
     let dots = '';
     images.forEach((img, i) => {
         if (typeof img === 'object' && img.type === 'folder') {
-            // Folder embed
             slides += `<iframe src="https://drive.google.com/embeddedfolderview?id=${img.folderId}#grid" style="min-width:100%;height:100%;border:none;flex-shrink:0;" loading="lazy"></iframe>`;
         } else {
             slides += `<img src="${img}" alt="product image" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Error'">`;
@@ -602,7 +677,7 @@ function buildGalleryHtml(cardId, images) {
     </div>`;
 }
 
-// Render all products
+// ── RENDER ALL PRODUCTS ──
 async function renderProducts() {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Loading products...</p></div>`;
@@ -625,15 +700,25 @@ async function renderProducts() {
         for (let [id, prod] of entries) {
             const images = await processImageUrls(prod.images);
             const galleryHtml = buildGalleryHtml(id, images);
-            
-            const firstImageUrl = typeof images[0] === 'string' ? images[0] : '#';
+
+            // Store images for download (use download URLs for Drive)
+            const downloadImages = images.map(img => {
+                if (typeof img === 'string' && img.includes('drive.google.com')) {
+                    return convertDriveDownloadLink(img);
+                }
+                return img;
+            });
+            productImageStore[id] = {
+                name: prod.name || 'product',
+                images: downloadImages
+            };
 
             let specialHtml = globalUnlocked
                 ? `<div class="special-price-show"><i class="fas fa-tags"></i> Wholesale: Rs. ${Number(prod.specialPrice).toLocaleString()}</div>`
                 : `<button class="reveal-btn" data-id="${id}"><i class="fas fa-lock"></i> Tap to See Wholesale Price</button>`;
 
             html += `
-            <div class="product-card" data-id="${id}">
+            <div class="product-card" data-id="${id}" data-name="${escapeAttr(prod.name||'')}" data-desc="${escapeAttr(prod.desc||'')}">
                 ${galleryHtml}
                 <div class="product-details">
                     <div class="product-title">${escapeHtml(prod.name || 'Product')}</div>
@@ -646,8 +731,8 @@ async function renderProducts() {
                     </div>
                     <div class="special-box" id="sbox-${id}">${specialHtml}</div>
                     <div class="action-row">
-                        <a href="${firstImageUrl}" target="_blank" class="action-btn"><i class="fas fa-eye"></i> View</a>
-                        <a href="${firstImageUrl}" download class="action-btn"><i class="fas fa-download"></i> Save</a>
+                        <button class="action-btn" onclick="downloadCurrentImage('${id}')"><i class="fas fa-download"></i> Download Image</button>
+                        <button class="action-btn dl-all" onclick="downloadAllImages('${id}')"><i class="fas fa-images"></i> Download All</button>
                         <button class="action-btn whatsapp" onclick="shareWhatsApp('${id}','${escapeAttr(prod.name)}','${prod.marketPrice}')"><i class="fab fa-whatsapp"></i></button>
                     </div>
                 </div>
@@ -657,6 +742,7 @@ async function renderProducts() {
         grid.innerHTML = html;
         initGalleries();
         attachRevealBtns();
+        initSearch();
 
     } catch(e) {
         console.error(e);
@@ -680,7 +766,9 @@ Error: ${e.message}
     }
 }
 
-// Slider logic
+// ── SLIDER LOGIC (unchanged) ──
+const galleryState = {}; // track current slide per card
+
 function initGalleries() {
     document.querySelectorAll('.product-card').forEach(card => {
         const id = card.dataset.id;
@@ -689,9 +777,11 @@ function initGalleries() {
         const slides = track.children;
         if (slides.length <= 1) return;
         let current = 0;
+        galleryState[id] = 0;
 
         function goTo(n) {
             current = (n + slides.length) % slides.length;
+            galleryState[id] = current;
             track.style.transform = `translateX(-${current * 100}%)`;
             card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach((d, i) => {
                 d.classList.toggle('active', i === current);
@@ -717,6 +807,164 @@ function initGalleries() {
     });
 }
 
+// ── DOWNLOAD CURRENT IMAGE (blob method, full quality) ──
+async function downloadCurrentImage(cardId) {
+    const store = productImageStore[cardId];
+    if (!store) return;
+
+    const currentIdx = galleryState[cardId] || 0;
+    const imgUrl = store.images[currentIdx];
+
+    if (!imgUrl || typeof imgUrl !== 'string') {
+        showToast('⚠️ No image available to download');
+        return;
+    }
+
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+
+    try {
+        const url = await fetchBlobUrl(imgUrl);
+        const safeName = store.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        triggerDownload(url, `${safeName}-${currentIdx + 1}.jpg`);
+        URL.revokeObjectURL(url);
+        showToast('✅ Image downloaded!');
+    } catch(e) {
+        console.error(e);
+        showToast('❌ Download failed. Try again.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> Download Image';
+    }
+}
+
+// ── DOWNLOAD ALL IMAGES AS ZIP ──
+async function downloadAllImages(cardId) {
+    const store = productImageStore[cardId];
+    if (!store || !store.images.length) {
+        showToast('⚠️ No images to download');
+        return;
+    }
+
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Zipping...';
+
+    try {
+        const zip = new JSZip();
+        const safeName = store.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        let count = 0;
+
+        for (let i = 0; i < store.images.length; i++) {
+            const imgUrl = store.images[i];
+            if (!imgUrl || typeof imgUrl !== 'string') continue;
+            try {
+                const res = await fetch(imgUrl, { mode: 'cors' });
+                if (!res.ok) continue;
+                const blob = await res.blob();
+                const ext = getExtFromBlob(blob);
+                zip.file(`${safeName}-${i + 1}.${ext}`, blob);
+                count++;
+            } catch(e) {
+                console.warn(`Skipped image ${i + 1}:`, e.message);
+            }
+        }
+
+        if (count === 0) {
+            showToast('❌ No images could be fetched (CORS issue)');
+            return;
+        }
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        const url = URL.createObjectURL(content);
+        triggerDownload(url, `${safeName}-images.zip`);
+        URL.revokeObjectURL(url);
+        showToast(`✅ ${count} image(s) downloaded as ZIP!`);
+    } catch(e) {
+        console.error(e);
+        showToast('❌ ZIP download failed.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-images"></i> Download All';
+    }
+}
+
+// ── BLOB FETCH HELPER ──
+async function fetchBlobUrl(url) {
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+    const blob = await res.blob();
+    return URL.createObjectURL(blob);
+}
+
+function getExtFromBlob(blob) {
+    if (blob.type.includes('png')) return 'png';
+    if (blob.type.includes('gif')) return 'gif';
+    if (blob.type.includes('webp')) return 'webp';
+    return 'jpg';
+}
+
+function triggerDownload(blobUrl, filename) {
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// ── LIVE SEARCH ──
+function initSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim().toLowerCase();
+        searchClear.classList.toggle('visible', query.length > 0);
+        filterProducts(query);
+    });
+
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.classList.remove('visible');
+        filterProducts('');
+        searchInput.focus();
+    });
+}
+
+function filterProducts(query) {
+    const cards = document.querySelectorAll('.product-card[data-id]');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const name = (card.dataset.name || '').toLowerCase();
+        const desc = (card.dataset.desc || '').toLowerCase();
+        const matches = !query || name.includes(query) || desc.includes(query);
+        card.dataset.hidden = matches ? 'false' : 'true';
+        if (matches) visibleCount++;
+    });
+
+    // Show "no results" if needed
+    const existing = document.getElementById('noResultsMsg');
+    if (existing) existing.remove();
+
+    if (query && visibleCount === 0) {
+        const noRes = document.createElement('div');
+        noRes.id = 'noResultsMsg';
+        noRes.className = 'no-results';
+        noRes.style.gridColumn = '1 / -1';
+        noRes.innerHTML = `
+            <i class="fas fa-search"></i>
+            <h3>No products found</h3>
+            <p>No results for "<strong>${escapeHtml(query)}</strong>". Try a different keyword.</p>
+        `;
+        document.getElementById('productsGrid').appendChild(noRes);
+    }
+}
+
+// ── REVEAL BUTTONS ──
 function attachRevealBtns() {
     document.querySelectorAll('.reveal-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -767,7 +1015,7 @@ function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 function escapeAttr(str) {
-    return String(str||'').replace(/'/g, "\\'");
+    return String(str||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
 document.getElementById('unlockBtn').addEventListener('click', checkUnlock);
