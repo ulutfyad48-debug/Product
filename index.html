@@ -6,7 +6,6 @@
     <title>Mart PK | Premium Wholesale Store</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- JSZip for Download All Images -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         :root {
@@ -26,14 +25,9 @@
             --radius: 1.5rem;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            background: var(--bg);
-            font-family: 'DM Sans', sans-serif;
-            color: var(--text);
-            min-height: 100vh;
-        }
+        body { background:var(--bg); font-family:'DM Sans',sans-serif; color:var(--text); min-height:100vh; }
 
-        /* ── HERO HEADER ── */
+        /* ── HERO ── */
         .hero {
             background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 60%, var(--green) 100%);
             padding: 2.5rem 1.5rem 3.5rem;
@@ -42,502 +36,131 @@
             overflow: hidden;
         }
         .hero::before {
-            content: '';
-            position: absolute; inset: 0;
+            content:''; position:absolute; inset:0;
             background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
         .hero-badge {
-            display: inline-block;
-            background: rgba(212,160,23,0.2);
-            border: 1px solid rgba(212,160,23,0.5);
-            color: var(--gold-light);
-            padding: 0.35rem 1.2rem;
-            border-radius: 60px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
+            display:inline-block; background:rgba(212,160,23,0.2);
+            border:1px solid rgba(212,160,23,0.5); color:var(--gold-light);
+            padding:.35rem 1.2rem; border-radius:60px; font-size:.78rem;
+            font-weight:600; letter-spacing:2px; text-transform:uppercase; margin-bottom:1rem;
         }
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 6vw, 3.5rem);
-            font-weight: 900;
-            color: white;
-            line-height: 1.1;
-            margin-bottom: 0.6rem;
-        }
-        .hero h1 span { color: var(--gold-light); }
-        .hero p {
-            color: rgba(255,255,255,0.65);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
+        .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,6vw,3.5rem); font-weight:900; color:white; line-height:1.1; margin-bottom:.6rem; }
+        .hero h1 span { color:var(--gold-light); }
+        .hero p { color:rgba(255,255,255,.65); font-size:.95rem; margin-bottom:2rem; }
 
-        /* ── PASSWORD UNLOCK ── */
-        .unlock-card {
-            max-width: 480px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.07);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: var(--radius);
-            padding: 1.4rem 1.6rem;
-        }
-        .unlock-label {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.82rem;
-            font-weight: 500;
-            margin-bottom: 0.6rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .unlock-row {
-            display: flex;
-            gap: 10px;
-        }
-        .unlock-row input {
-            flex: 1;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 60px;
-            padding: 0.7rem 1.2rem;
-            color: white;
-            font-size: 0.95rem;
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-            transition: border 0.2s;
-        }
-        .unlock-row input::placeholder { color: rgba(255,255,255,0.35); }
-        .unlock-row input:focus { border-color: var(--gold-light); }
-        .unlock-btn {
-            background: var(--gold);
-            color: var(--dark);
-            border: none;
-            border-radius: 60px;
-            padding: 0 1.5rem;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .unlock-btn:hover { background: var(--gold-light); transform: scale(0.97); }
+        /* ── UNLOCK CARD ── */
+        .unlock-card { max-width:480px; margin:0 auto; background:rgba(255,255,255,.07); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); padding:1.4rem 1.6rem; }
+        .unlock-label { color:rgba(255,255,255,.7); font-size:.82rem; font-weight:500; margin-bottom:.6rem; display:flex; align-items:center; gap:.4rem; }
+        .unlock-row { display:flex; gap:10px; }
+        .unlock-row input { flex:1; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:60px; padding:.7rem 1.2rem; color:white; font-size:.95rem; font-family:'DM Sans',sans-serif; outline:none; transition:border .2s; }
+        .unlock-row input::placeholder { color:rgba(255,255,255,.35); }
+        .unlock-row input:focus { border-color:var(--gold-light); }
+        .unlock-btn { background:var(--gold); color:var(--dark); border:none; border-radius:60px; padding:0 1.5rem; font-weight:700; font-size:.9rem; cursor:pointer; transition:.2s; display:flex; align-items:center; gap:6px; font-family:'DM Sans',sans-serif; }
+        .unlock-btn:hover { background:var(--gold-light); transform:scale(.97); }
+        .unlock-success { margin-top:.8rem; text-align:center; background:rgba(34,197,94,.15); border:1px solid rgba(34,197,94,.3); color:#86efac; padding:.6rem 1rem; border-radius:60px; font-size:.85rem; }
 
-        .unlock-success {
-            margin-top: 0.8rem;
-            text-align: center;
-            background: rgba(34,197,94,0.15);
-            border: 1px solid rgba(34,197,94,0.3);
-            color: #86efac;
-            padding: 0.6rem 1rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-        }
+        .wave { display:block; width:100%; height:50px; background:var(--dark2); clip-path:ellipse(55% 100% at 50% 0%); margin-top:-1px; }
 
-        /* ── WAVE DIVIDER ── */
-        .wave {
-            display: block;
-            width: 100%;
-            height: 50px;
-            background: var(--dark2);
-            clip-path: ellipse(55% 100% at 50% 0%);
-            margin-top: -1px;
-        }
+        /* ── MAIN ── */
+        .main { padding:2rem 1.2rem 3rem; max-width:1300px; margin:0 auto; }
+        .section-title { display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem; font-family:'Playfair Display',serif; font-size:1.4rem; }
+        .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-        /* ── MAIN CONTENT ── */
-        .main {
-            padding: 2rem 1.2rem 3rem;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-        }
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* ── SEARCH BAR ── */
-        .search-wrap {
-            margin-bottom: 1.8rem;
-            position: relative;
-        }
-        .search-wrap i {
-            position: absolute;
-            left: 1.1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1rem;
-            pointer-events: none;
-        }
-        .search-input {
-            width: 100%;
-            padding: 0.85rem 1rem 0.85rem 2.9rem;
-            border: 2px solid var(--border);
-            border-radius: 60px;
-            font-size: 0.95rem;
-            font-family: 'DM Sans', sans-serif;
-            color: var(--text);
-            background: white;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
-        }
-        .search-input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 4px 20px rgba(212,160,23,0.15);
-        }
-        .search-input::placeholder { color: var(--text-muted); }
-        .search-clear {
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--border);
-            border: none;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            transition: 0.2s;
-        }
-        .search-clear:hover { background: var(--gold-light); color: var(--dark); }
-        .search-clear.visible { display: flex; }
-
-        /* No results state */
-        .no-results {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
-        }
-        .no-results i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.25; display: block; }
-        .no-results h3 { font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--text); }
-        .no-results p { font-size: 0.88rem; }
+        /* ── SEARCH ── */
+        .search-wrap { margin-bottom:1.8rem; position:relative; }
+        .search-wrap .si { position:absolute; left:1.1rem; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none; }
+        .search-input { width:100%; padding:.85rem 3rem .85rem 2.9rem; border:2px solid var(--border); border-radius:60px; font-size:.95rem; font-family:'DM Sans',sans-serif; color:var(--text); background:white; outline:none; transition:border-color .2s, box-shadow .2s; box-shadow:0 4px 16px rgba(0,0,0,.05); }
+        .search-input:focus { border-color:var(--gold); box-shadow:0 4px 20px rgba(212,160,23,.15); }
+        .search-input::placeholder { color:var(--text-muted); }
+        .search-clear { position:absolute; right:1rem; top:50%; transform:translateY(-50%); background:var(--border); border:none; border-radius:50%; width:26px; height:26px; cursor:pointer; display:none; align-items:center; justify-content:center; font-size:.75rem; color:var(--text-muted); transition:.2s; }
+        .search-clear:hover { background:var(--gold-light); color:var(--dark); }
+        .search-clear.visible { display:flex; }
 
         /* ── PRODUCT GRID ── */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.8rem;
-        }
+        .products-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.8rem; }
 
-        .product-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.25s, box-shadow 0.25s;
-            border: 1px solid transparent;
-        }
-        .product-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.14);
-            border-color: var(--gold);
-        }
-        .product-card[data-hidden="true"] {
-            display: none;
-        }
+        /* ── SKELETON LOADER ── */
+        .skeleton-card { background:white; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+        .skeleton-img { height:250px; background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
+        .skeleton-body { padding:1.2rem 1.3rem; }
+        .skeleton-line { height:14px; border-radius:8px; background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; margin-bottom:10px; }
+        .skeleton-line.w80 { width:80%; }
+        .skeleton-line.w60 { width:60%; }
+        .skeleton-line.w40 { width:40%; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-        /* ── IMAGE GALLERY / SLIDER ── */
-        .gallery-wrap {
-            position: relative;
-            height: 250px;
-            background: #eef2f3;
-            overflow: hidden;
-        }
-        .slides-track {
-            display: flex;
-            height: 100%;
-            transition: transform 0.4s ease;
-        }
-        .slides-track img {
-            min-width: 100%;
-            height: 100%;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
-        .gallery-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
-            border: none;
-            color: white;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            transition: 0.2s;
-            z-index: 5;
-        }
-        .gallery-btn:hover { background: var(--gold); }
-        .gallery-btn.prev { left: 8px; }
-        .gallery-btn.next { right: 8px; }
-        .gallery-dots {
-            position: absolute;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 5px;
-            z-index: 5;
-        }
-        .gallery-dots span {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .gallery-dots span.active { background: var(--gold-light); width: 18px; border-radius: 4px; }
-        .img-count-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.5);
-            color: white;
-            font-size: 0.72rem;
-            padding: 3px 9px;
-            border-radius: 30px;
-            z-index: 5;
-        }
+        /* ── PRODUCT CARD ── */
+        .product-card { background:var(--card-bg); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:transform .25s,box-shadow .25s; border:1px solid transparent; animation:fadeUp .3s ease both; }
+        .product-card:hover { transform:translateY(-6px); box-shadow:0 20px 60px rgba(0,0,0,.14); border-color:var(--gold); }
+        .product-card[data-hidden="true"] { display:none; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ── GALLERY ── */
+        .gallery-wrap { position:relative; height:250px; background:#eef2f3; overflow:hidden; }
+        .slides-track { display:flex; height:100%; transition:transform .4s ease; }
+        .slides-track img { min-width:100%; height:100%; object-fit:cover; flex-shrink:0; }
+        .gallery-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.5); border:none; color:white; width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:.8rem; transition:.2s; z-index:5; }
+        .gallery-btn:hover { background:var(--gold); }
+        .gallery-btn.prev { left:8px; }
+        .gallery-btn.next { right:8px; }
+        .gallery-dots { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:5; }
+        .gallery-dots span { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.5); cursor:pointer; transition:.2s; }
+        .gallery-dots span.active { background:var(--gold-light); width:18px; border-radius:4px; }
+        .img-count-badge { position:absolute; top:10px; right:10px; background:rgba(0,0,0,.5); color:white; font-size:.72rem; padding:3px 9px; border-radius:30px; z-index:5; }
 
         /* ── PRODUCT DETAILS ── */
-        .product-details { padding: 1.2rem 1.3rem; }
-
-        .product-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 0.6rem;
-            color: var(--dark);
-        }
-
-        .desc-box {
-            background: #f8fafc;
-            border-radius: 0.9rem;
-            padding: 0.8rem 1rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 0.9rem;
-        }
-        .desc-text { flex: 1; word-break: break-word; }
-        .copy-btn {
-            background: #e2e8f0;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .copy-btn:hover { background: var(--gold-light); }
-
-        .price-row {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
-        }
-        .market-price {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--red);
-            text-decoration: line-through;
-            opacity: 0.8;
-        }
-
-        .special-box {
-            background: linear-gradient(135deg, #fffbeb, #fef3c7);
-            border: 1px dashed var(--gold);
-            border-radius: 1rem;
-            padding: 0.9rem;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        .reveal-btn {
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
-            color: var(--dark);
-            border: none;
-            padding: 9px 0;
-            width: 100%;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.88rem;
-            cursor: pointer;
-            transition: 0.2s;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .reveal-btn:hover { transform: scale(0.98); opacity: 0.9; }
-        .special-price-show {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--green);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
+        .product-details { padding:1.2rem 1.3rem; }
+        .product-title { font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; margin-bottom:.6rem; color:var(--dark); }
+        .desc-box { background:#f8fafc; border-radius:.9rem; padding:.8rem 1rem; font-size:.85rem; color:var(--text-muted); line-height:1.5; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:.9rem; }
+        .desc-text { flex:1; word-break:break-word; }
+        .copy-btn { background:#e2e8f0; border:none; padding:5px 12px; border-radius:30px; font-size:.72rem; font-weight:600; cursor:pointer; transition:.2s; display:flex; align-items:center; gap:4px; white-space:nowrap; font-family:'DM Sans',sans-serif; }
+        .copy-btn:hover { background:var(--gold-light); }
+        .price-row { display:flex; align-items:center; gap:1rem; margin-bottom:.8rem; }
+        .market-price { font-size:1.1rem; font-weight:700; color:var(--red); text-decoration:line-through; opacity:.8; }
+        .special-box { background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px dashed var(--gold); border-radius:1rem; padding:.9rem; text-align:center; margin-bottom:1rem; }
+        .reveal-btn { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:var(--dark); border:none; padding:9px 0; width:100%; border-radius:40px; font-weight:700; font-size:.88rem; cursor:pointer; transition:.2s; font-family:'DM Sans',sans-serif; }
+        .reveal-btn:hover { transform:scale(.98); opacity:.9; }
+        .special-price-show { font-size:1.25rem; font-weight:800; color:var(--green); display:flex; align-items:center; justify-content:center; gap:6px; }
 
         /* ── ACTION ROW ── */
-        .action-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .action-btn {
-            flex: 1;
-            min-width: 0;
-            background: var(--dark);
-            color: white;
-            border: none;
-            padding: 9px 8px;
-            border-radius: 40px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: 0.2s;
-            font-family: 'DM Sans', sans-serif;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        .action-btn:hover { background: var(--green); }
-        .action-btn.whatsapp { background: #25d366; flex: 0 0 auto; padding: 9px 14px; }
-        .action-btn.whatsapp:hover { background: #1ebe57; }
-        .action-btn.dl-all { background: var(--dark2); }
-        .action-btn.dl-all:hover { background: var(--green); }
-        .action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .action-row { display:flex; gap:8px; flex-wrap:wrap; }
+        .action-btn { flex:1; min-width:0; background:var(--dark); color:white; border:none; padding:9px 8px; border-radius:40px; font-size:.78rem; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; transition:.2s; font-family:'DM Sans',sans-serif; text-decoration:none; white-space:nowrap; }
+        .action-btn:hover { background:var(--green); }
+        .action-btn.dl-all { background:var(--dark2); }
+        .action-btn.dl-all:hover { background:var(--green); }
+        .action-btn.whatsapp { background:#25d366; flex:0 0 auto; padding:9px 14px; }
+        .action-btn.whatsapp:hover { background:#1ebe57; }
+        .action-btn:disabled { opacity:.6; cursor:not-allowed; }
 
-        /* ── LOADING & EMPTY ── */
-        .loading-screen {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 4rem;
-            color: var(--text-muted);
-        }
-        .spinner {
-            width: 48px; height: 48px;
-            border: 4px solid var(--border);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .empty-state {
-            grid-column: 1/-1;
-            text-align: center;
-            padding: 4rem;
-            color: var(--text-muted);
-        }
-        .empty-state i { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
-
-        .error-box {
-            grid-column: 1/-1;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: var(--radius);
-            padding: 2rem;
-            text-align: center;
-            color: var(--red);
-        }
-        .error-box code {
-            display: block;
-            background: #fff5f5;
-            border-radius: 0.5rem;
-            padding: 0.8rem;
-            font-size: 0.8rem;
-            margin-top: 1rem;
-            color: #7f1d1d;
-            text-align: left;
-        }
+        /* ── STATES ── */
+        .empty-state { grid-column:1/-1; text-align:center; padding:4rem; color:var(--text-muted); }
+        .empty-state i { font-size:3rem; margin-bottom:1rem; opacity:.3; display:block; }
+        .no-results { grid-column:1/-1; text-align:center; padding:4rem 2rem; color:var(--text-muted); }
+        .no-results i { font-size:3rem; margin-bottom:1rem; opacity:.25; display:block; }
+        .no-results h3 { font-size:1.1rem; margin-bottom:.4rem; color:var(--text); }
+        .error-box { grid-column:1/-1; background:#fef2f2; border:1px solid #fecaca; border-radius:var(--radius); padding:2rem; text-align:center; color:var(--red); }
+        .error-box code { display:block; background:#fff5f5; border-radius:.5rem; padding:.8rem; font-size:.8rem; margin-top:1rem; color:#7f1d1d; text-align:left; }
 
         /* ── TOAST ── */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: var(--dark);
-            color: white;
-            padding: 10px 24px;
-            border-radius: 60px;
-            font-size: 0.88rem;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.2s, transform 0.2s;
-            z-index: 9999;
-            white-space: nowrap;
-            pointer-events: none;
-        }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(10px); background:var(--dark); color:white; padding:10px 24px; border-radius:60px; font-size:.88rem; font-weight:500; opacity:0; transition:opacity .2s,transform .2s; z-index:9999; white-space:nowrap; pointer-events:none; }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-        /* ── FOOTER ── */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            border-top: 1px solid var(--border);
-        }
+        .footer { text-align:center; padding:2rem; color:var(--text-muted); font-size:.8rem; border-top:1px solid var(--border); }
 
-        @media (max-width: 640px) {
-            .products-grid { grid-template-columns: 1fr; }
-            .hero { padding: 2rem 1rem 3rem; }
-            .unlock-card { padding: 1.1rem; }
+        @media(max-width:640px) {
+            .products-grid { grid-template-columns:1fr; }
+            .hero { padding:2rem 1rem 3rem; }
+            .unlock-card { padding:1.1rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- HERO -->
 <div class="hero">
     <div class="hero-badge"><i class="fas fa-gem"></i> &nbsp;Premium Wholesale</div>
     <h1>Mart <span>PK</span></h1>
     <p>Exclusive products at unbeatable wholesale prices</p>
-
     <div class="unlock-card">
         <div class="unlock-label"><i class="fas fa-lock-open"></i> Enter password to unlock wholesale prices</div>
         <div class="unlock-row">
@@ -549,226 +172,216 @@
 </div>
 <div class="wave"></div>
 
-<!-- PRODUCTS -->
 <div class="main">
     <div class="section-title"><i class="fas fa-boxes" style="color:var(--gold)"></i> Our Products</div>
 
-    <!-- SEARCH BAR -->
     <div class="search-wrap">
-        <i class="fas fa-search"></i>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search products by name or description...">
-        <button class="search-clear" id="searchClear" title="Clear search"><i class="fas fa-times"></i></button>
+        <i class="fas fa-search si"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by product name or description...">
+        <button class="search-clear" id="searchClear"><i class="fas fa-times"></i></button>
     </div>
 
-    <div id="productsGrid" class="products-grid">
-        <div class="loading-screen"><div class="spinner"></div><p>Loading products...</p></div>
-    </div>
+    <div id="productsGrid" class="products-grid"></div>
 </div>
 
-<footer class="footer">
-    &copy; 2025 Mart PK &mdash; All Rights Reserved
-</footer>
-
+<footer class="footer">&copy; 2025 Mart PK &mdash; All Rights Reserved</footer>
 <div class="toast" id="toast"></div>
 
 <script>
-// ─────────────────────────────────────────────
-// CONFIG — صرف یہاں تبدیلی کریں
-// ─────────────────────────────────────────────
+// ── CONFIG ──
 const DB_URL = "https://mart-c4baa-default-rtdb.firebaseio.com/";
 const FIXED_PASSWORD = "786";
+const BATCH_SIZE = 10; // render products in batches of 10
 
-// ─────────────────────────────────────────────
 let globalUnlocked = false;
+const galleryState = {};
+const productImageStore = {};
 
-// ── GOOGLE DRIVE LINK CONVERTER ──
+// ── DRIVE HELPERS ──
 function getDriveFileId(url) {
-    const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-    if (fileMatch) return fileMatch[1];
-    const ucMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-    if (ucMatch) return ucMatch[1];
+    const m1 = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (m1) return m1[1];
+    const m2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (m2) return m2[1];
     return null;
 }
 
-function convertDriveDisplayLink(url) {
-    if (!url) return '';
+// Fast thumbnail URL (no redirect, no auth check)
+function driveDisplayUrl(url) {
     const id = getDriveFileId(url);
-    if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
+    if (id) return `https://lh3.googleusercontent.com/d/${id}`;
     return url;
 }
 
-function convertDriveDownloadLink(url) {
-    if (!url) return '';
+// Direct download URL
+function driveDownloadUrl(url) {
     const id = getDriveFileId(url);
     if (id) return `https://drive.google.com/uc?export=download&id=${id}`;
     return url;
 }
 
-// ── FETCH GOOGLE DRIVE FOLDER FILES ──
-async function fetchPublicDriveFolder(folderId) {
-    try {
-        return null; // Folder embed fallback
-    } catch(e) { return null; }
-}
-
-// ── SMART IMAGE URL PROCESSOR ──
-async function processImageUrls(rawImages) {
+// ── PROCESS IMAGE URLS (sync — no await needed) ──
+function processImageUrls(rawImages) {
     if (!rawImages || !rawImages.length) return ['https://placehold.co/600x400?text=No+Image'];
-    
-    let result = [];
+    const result = [];
     for (let url of rawImages) {
         if (!url || !url.trim()) continue;
-        const trimmed = url.trim();
-        
-        // Google Drive FOLDER
-        if (trimmed.includes('drive.google.com') && trimmed.includes('/folders/')) {
-            const folderMatch = trimmed.match(/\/folders\/([a-zA-Z0-9_-]+)/);
-            if (folderMatch) {
-                const folderImages = await fetchPublicDriveFolder(folderMatch[1]);
-                if (folderImages && folderImages.length) {
-                    result.push(...folderImages);
-                } else {
-                    result.push({ type: 'folder', folderId: folderMatch[1], url: trimmed });
-                }
-            }
-        }
-        // Google Drive single file
-        else if (trimmed.includes('drive.google.com')) {
-            result.push(convertDriveDisplayLink(trimmed));
-        }
-        // Regular URL or base64
-        else {
-            result.push(trimmed);
+        const t = url.trim();
+        if (t.includes('drive.google.com') && t.includes('/folders/')) {
+            const m = t.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+            if (m) result.push({ type:'folder', folderId:m[1] });
+        } else if (t.includes('drive.google.com')) {
+            result.push(driveDisplayUrl(t));
+        } else {
+            result.push(t);
         }
     }
     return result.length ? result : ['https://placehold.co/600x400?text=No+Image'];
 }
 
-// ── STORE FOR DOWNLOAD: productId → {name, images[]} ──
-const productImageStore = {};
+// ── SKELETON HTML ──
+function skeletonHtml(count) {
+    let h = '';
+    for (let i = 0; i < count; i++) {
+        h += `<div class="skeleton-card">
+            <div class="skeleton-img"></div>
+            <div class="skeleton-body">
+                <div class="skeleton-line w80"></div>
+                <div class="skeleton-line w60"></div>
+                <div class="skeleton-line w40"></div>
+            </div>
+        </div>`;
+    }
+    return h;
+}
 
 // ── BUILD GALLERY HTML ──
 function buildGalleryHtml(cardId, images) {
     if (!images || !images.length) {
-        return `<div class="gallery-wrap"><div class="slides-track"><img src="https://placehold.co/600x400?text=No+Image" alt="no image"></div></div>`;
+        return `<div class="gallery-wrap"><div class="slides-track"><img src="https://placehold.co/600x400?text=No+Image" alt="no image" loading="lazy"></div></div>`;
     }
-
-    let slides = '';
-    let dots = '';
+    let slides = '', dots = '';
     images.forEach((img, i) => {
         if (typeof img === 'object' && img.type === 'folder') {
             slides += `<iframe src="https://drive.google.com/embeddedfolderview?id=${img.folderId}#grid" style="min-width:100%;height:100%;border:none;flex-shrink:0;" loading="lazy"></iframe>`;
         } else {
-            slides += `<img src="${img}" alt="product image" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Error'">`;
+            // First image: eager (visible), rest: lazy
+            slides += `<img src="${img}" alt="product" loading="${i === 0 ? 'eager' : 'lazy'}" onerror="this.src='https://placehold.co/600x400?text=Error'">`;
         }
         dots += `<span class="${i===0?'active':''}" data-idx="${i}" data-card="${cardId}"></span>`;
     });
 
-    const navBtns = images.length > 1 ? `
+    const nav = images.length > 1 ? `
         <button class="gallery-btn prev" data-card="${cardId}"><i class="fas fa-chevron-left"></i></button>
         <button class="gallery-btn next" data-card="${cardId}"><i class="fas fa-chevron-right"></i></button>
         <div class="gallery-dots">${dots}</div>
-        <div class="img-count-badge"><i class="fas fa-images"></i> ${images.length}</div>
-    ` : '';
+        <div class="img-count-badge"><i class="fas fa-images"></i> ${images.length}</div>` : '';
 
     return `<div class="gallery-wrap" id="gallery-${cardId}">
-        <div class="slides-track" id="track-${cardId}">${slides}</div>
-        ${navBtns}
+        <div class="slides-track" id="track-${cardId}">${slides}</div>${nav}
     </div>`;
 }
 
-// ── RENDER ALL PRODUCTS ──
+// ── BUILD SINGLE CARD HTML ──
+function buildCardHtml(id, prod, images) {
+    const dlImages = images.map(img => {
+        if (typeof img === 'string' && img.includes('drive.google.com')) return driveDownloadUrl(img);
+        if (typeof img === 'string' && img.includes('lh3.googleusercontent.com')) {
+            // reverse map back to download url
+            const m = img.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (m) return `https://drive.google.com/uc?export=download&id=${m[1]}`;
+        }
+        return img;
+    });
+
+    productImageStore[id] = { name: prod.name || 'product', images: dlImages };
+
+    const specialHtml = globalUnlocked
+        ? `<div class="special-price-show"><i class="fas fa-tags"></i> Wholesale: Rs. ${Number(prod.specialPrice).toLocaleString()}</div>`
+        : `<button class="reveal-btn" data-id="${id}"><i class="fas fa-lock"></i> Tap to See Wholesale Price</button>`;
+
+    return `<div class="product-card" data-id="${id}" data-name="${escAttr(prod.name||'')}" data-desc="${escAttr(prod.desc||'')}">
+        ${buildGalleryHtml(id, images)}
+        <div class="product-details">
+            <div class="product-title">${esc(prod.name||'Product')}</div>
+            <div class="desc-box">
+                <span class="desc-text" id="desc-${id}">${esc(prod.desc||'Premium quality product')}</span>
+                <button class="copy-btn" onclick="copyDesc('${id}')"><i class="far fa-copy"></i> Copy</button>
+            </div>
+            <div class="price-row">
+                <div class="market-price">Market: Rs. ${Number(prod.marketPrice).toLocaleString()}</div>
+            </div>
+            <div class="special-box" id="sbox-${id}">${specialHtml}</div>
+            <div class="action-row">
+                <button class="action-btn" onclick="downloadCurrentImage('${id}',event)"><i class="fas fa-download"></i> Download</button>
+                <button class="action-btn dl-all" onclick="downloadAllImages('${id}',event)"><i class="fas fa-images"></i> All</button>
+                <button class="action-btn whatsapp" onclick="shareWhatsApp('${id}','${escAttr(prod.name)}','${prod.marketPrice}')"><i class="fab fa-whatsapp"></i></button>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ── RENDER PRODUCTS — FAST PARALLEL + BATCH PAINT ──
 async function renderProducts() {
     const grid = document.getElementById('productsGrid');
-    grid.innerHTML = `<div class="loading-screen"><div class="spinner"></div><p>Loading products...</p></div>`;
+
+    // Show skeletons immediately (8 placeholders)
+    grid.innerHTML = skeletonHtml(8);
 
     try {
         const res = await fetch(`${DB_URL}products.json`);
-        if (!res.ok) {
-            throw new Error(`Firebase Error ${res.status}: ${res.statusText}. Check Firebase rules.`);
-        }
+        if (!res.ok) throw new Error(`Firebase Error ${res.status}`);
         const data = await res.json();
 
         if (!data || Object.keys(data).length === 0) {
-            grid.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i><p>No products yet. Check back soon!</p></div>`;
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-box-open"></i><p>No products yet.</p></div>`;
             return;
         }
 
-        let html = '';
         const entries = Object.entries(data);
 
-        for (let [id, prod] of entries) {
-            const images = await processImageUrls(prod.images);
-            const galleryHtml = buildGalleryHtml(id, images);
+        // ✅ Process ALL images in parallel (not sequential)
+        const processed = entries.map(([id, prod]) => ({
+            id,
+            prod,
+            images: processImageUrls(prod.images)  // sync now — no await
+        }));
 
-            // Store images for download (use download URLs for Drive)
-            const downloadImages = images.map(img => {
-                if (typeof img === 'string' && img.includes('drive.google.com')) {
-                    return convertDriveDownloadLink(img);
-                }
-                return img;
+        // Clear skeletons
+        grid.innerHTML = '';
+
+        // ✅ Render in batches so browser paints cards progressively
+        for (let i = 0; i < processed.length; i += BATCH_SIZE) {
+            const batch = processed.slice(i, i + BATCH_SIZE);
+            const fragment = document.createDocumentFragment();
+            batch.forEach(({ id, prod, images }) => {
+                const div = document.createElement('div');
+                div.innerHTML = buildCardHtml(id, prod, images);
+                fragment.appendChild(div.firstElementChild);
             });
-            productImageStore[id] = {
-                name: prod.name || 'product',
-                images: downloadImages
-            };
+            grid.appendChild(fragment);
 
-            let specialHtml = globalUnlocked
-                ? `<div class="special-price-show"><i class="fas fa-tags"></i> Wholesale: Rs. ${Number(prod.specialPrice).toLocaleString()}</div>`
-                : `<button class="reveal-btn" data-id="${id}"><i class="fas fa-lock"></i> Tap to See Wholesale Price</button>`;
-
-            html += `
-            <div class="product-card" data-id="${id}" data-name="${escapeAttr(prod.name||'')}" data-desc="${escapeAttr(prod.desc||'')}">
-                ${galleryHtml}
-                <div class="product-details">
-                    <div class="product-title">${escapeHtml(prod.name || 'Product')}</div>
-                    <div class="desc-box">
-                        <span class="desc-text" id="desc-${id}">${escapeHtml(prod.desc || 'Premium quality product')}</span>
-                        <button class="copy-btn" onclick="copyDesc('${id}')"><i class="far fa-copy"></i> Copy</button>
-                    </div>
-                    <div class="price-row">
-                        <div class="market-price">Market: Rs. ${Number(prod.marketPrice).toLocaleString()}</div>
-                    </div>
-                    <div class="special-box" id="sbox-${id}">${specialHtml}</div>
-                    <div class="action-row">
-                        <button class="action-btn" onclick="downloadCurrentImage('${id}')"><i class="fas fa-download"></i> Download Image</button>
-                        <button class="action-btn dl-all" onclick="downloadAllImages('${id}')"><i class="fas fa-images"></i> Download All</button>
-                        <button class="action-btn whatsapp" onclick="shareWhatsApp('${id}','${escapeAttr(prod.name)}','${prod.marketPrice}')"><i class="fab fa-whatsapp"></i></button>
-                    </div>
-                </div>
-            </div>`;
+            // Yield to browser between batches — smooth progressive render
+            await new Promise(r => setTimeout(r, 0));
         }
 
-        grid.innerHTML = html;
         initGalleries();
         attachRevealBtns();
         initSearch();
 
     } catch(e) {
         console.error(e);
-        grid.innerHTML = `
-        <div class="error-box">
-            <i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:0.8rem;display:block;"></i>
+        grid.innerHTML = `<div class="error-box">
+            <i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:.8rem;display:block;"></i>
             <strong>Products could not load.</strong><br>
-            <small>Please fix Firebase Database Rules (see steps below).</small>
-            <code>
-Go to: Firebase Console → Your Project → Realtime Database → Rules<br><br>
-Change rules to:<br>
-{<br>
-&nbsp;&nbsp;"rules": {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;".read": true,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;".write": false<br>
-&nbsp;&nbsp;}<br>
-}<br><br>
-Error: ${e.message}
-            </code>
+            <small>Check Firebase Database Rules.</small>
+            <code>Go to: Firebase Console → Realtime Database → Rules<br><br>
+{<br>&nbsp;&nbsp;"rules": {<br>&nbsp;&nbsp;&nbsp;&nbsp;".read": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;".write": false<br>&nbsp;&nbsp;}<br>}<br><br>Error: ${e.message}</code>
         </div>`;
     }
 }
 
-// ── SLIDER LOGIC (unchanged) ──
-const galleryState = {}; // track current slide per card
-
+// ── SLIDER ──
 function initGalleries() {
     document.querySelectorAll('.product-card').forEach(card => {
         const id = card.dataset.id;
@@ -783,184 +396,142 @@ function initGalleries() {
             current = (n + slides.length) % slides.length;
             galleryState[id] = current;
             track.style.transform = `translateX(-${current * 100}%)`;
-            card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach((d, i) => {
-                d.classList.toggle('active', i === current);
-            });
+            card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach((d,i) => d.classList.toggle('active', i===current));
         }
 
-        const prev = card.querySelector('.gallery-btn.prev');
-        const next = card.querySelector('.gallery-btn.next');
-        if (prev) prev.addEventListener('click', () => goTo(current - 1));
-        if (next) next.addEventListener('click', () => goTo(current + 1));
+        card.querySelector('.gallery-btn.prev')?.addEventListener('click', () => goTo(current-1));
+        card.querySelector('.gallery-btn.next')?.addEventListener('click', () => goTo(current+1));
+        card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach(dot =>
+            dot.addEventListener('click', () => goTo(parseInt(dot.dataset.idx))));
 
-        card.querySelectorAll(`.gallery-dots [data-card="${id}"]`).forEach(dot => {
-            dot.addEventListener('click', () => goTo(parseInt(dot.dataset.idx)));
-        });
-
-        // Touch swipe
         let startX = 0;
-        track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive:true });
         track.addEventListener('touchend', e => {
             const diff = startX - e.changedTouches[0].clientX;
-            if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
-        }, { passive: true });
+            if (Math.abs(diff) > 40) goTo(diff > 0 ? current+1 : current-1);
+        }, { passive:true });
     });
 }
 
-// ── DOWNLOAD CURRENT IMAGE (blob method, full quality) ──
-async function downloadCurrentImage(cardId) {
+// ── DOWNLOAD CURRENT IMAGE (blob — full quality) ──
+async function downloadCurrentImage(cardId, e) {
+    const btn = e.currentTarget;
     const store = productImageStore[cardId];
     if (!store) return;
 
-    const currentIdx = galleryState[cardId] || 0;
-    const imgUrl = store.images[currentIdx];
+    const idx = galleryState[cardId] || 0;
+    const imgUrl = store.images[idx];
+    if (!imgUrl || typeof imgUrl !== 'string') { showToast('⚠️ No image available'); return; }
 
-    if (!imgUrl || typeof imgUrl !== 'string') {
-        showToast('⚠️ No image available to download');
-        return;
-    }
-
-    const btn = event.currentTarget;
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
     try {
-        const url = await fetchBlobUrl(imgUrl);
-        const safeName = store.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-        triggerDownload(url, `${safeName}-${currentIdx + 1}.jpg`);
-        URL.revokeObjectURL(url);
+        const res = await fetch(imgUrl, { mode:'cors' });
+        if (!res.ok) throw new Error('Fetch failed');
+        const blob = await res.blob();
+        const bUrl = URL.createObjectURL(blob);
+        const safeName = store.name.replace(/[^a-z0-9]/gi,'-').toLowerCase();
+        triggerDownload(bUrl, `${safeName}-${idx+1}.${extFromBlob(blob)}`);
+        URL.revokeObjectURL(bUrl);
         showToast('✅ Image downloaded!');
-    } catch(e) {
-        console.error(e);
-        showToast('❌ Download failed. Try again.');
+    } catch(err) {
+        console.error(err);
+        showToast('❌ Download failed');
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-download"></i> Download Image';
+        btn.innerHTML = '<i class="fas fa-download"></i> Download';
     }
 }
 
-// ── DOWNLOAD ALL IMAGES AS ZIP ──
-async function downloadAllImages(cardId) {
+// ── DOWNLOAD ALL AS ZIP ──
+async function downloadAllImages(cardId, e) {
+    const btn = e.currentTarget;
     const store = productImageStore[cardId];
-    if (!store || !store.images.length) {
-        showToast('⚠️ No images to download');
-        return;
-    }
+    if (!store?.images?.length) { showToast('⚠️ No images'); return; }
 
-    const btn = event.currentTarget;
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Zipping...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
     try {
         const zip = new JSZip();
-        const safeName = store.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+        const safeName = store.name.replace(/[^a-z0-9]/gi,'-').toLowerCase();
         let count = 0;
 
-        for (let i = 0; i < store.images.length; i++) {
-            const imgUrl = store.images[i];
-            if (!imgUrl || typeof imgUrl !== 'string') continue;
-            try {
-                const res = await fetch(imgUrl, { mode: 'cors' });
-                if (!res.ok) continue;
-                const blob = await res.blob();
-                const ext = getExtFromBlob(blob);
-                zip.file(`${safeName}-${i + 1}.${ext}`, blob);
-                count++;
-            } catch(e) {
-                console.warn(`Skipped image ${i + 1}:`, e.message);
-            }
-        }
+        // Download all images in parallel
+        const fetches = store.images.map((imgUrl, i) => {
+            if (!imgUrl || typeof imgUrl !== 'string') return Promise.resolve(null);
+            return fetch(imgUrl, { mode:'cors' })
+                .then(r => r.ok ? r.blob() : null)
+                .then(blob => blob ? { blob, i } : null)
+                .catch(() => null);
+        });
 
-        if (count === 0) {
-            showToast('❌ No images could be fetched (CORS issue)');
-            return;
-        }
+        const results = await Promise.all(fetches);
+        results.forEach(r => {
+            if (!r) return;
+            zip.file(`${safeName}-${r.i+1}.${extFromBlob(r.blob)}`, r.blob);
+            count++;
+        });
 
-        const content = await zip.generateAsync({ type: 'blob' });
-        const url = URL.createObjectURL(content);
-        triggerDownload(url, `${safeName}-images.zip`);
-        URL.revokeObjectURL(url);
-        showToast(`✅ ${count} image(s) downloaded as ZIP!`);
-    } catch(e) {
-        console.error(e);
-        showToast('❌ ZIP download failed.');
+        if (count === 0) { showToast('❌ Images could not be fetched'); return; }
+
+        const content = await zip.generateAsync({ type:'blob' });
+        const bUrl = URL.createObjectURL(content);
+        triggerDownload(bUrl, `${safeName}-images.zip`);
+        URL.revokeObjectURL(bUrl);
+        showToast(`✅ ${count} image(s) in ZIP!`);
+    } catch(err) {
+        console.error(err);
+        showToast('❌ ZIP failed');
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-images"></i> Download All';
+        btn.innerHTML = '<i class="fas fa-images"></i> All';
     }
 }
 
-// ── BLOB FETCH HELPER ──
-async function fetchBlobUrl(url) {
-    const res = await fetch(url, { mode: 'cors' });
-    if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-    const blob = await res.blob();
-    return URL.createObjectURL(blob);
+function triggerDownload(url, name) {
+    const a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
-
-function getExtFromBlob(blob) {
+function extFromBlob(blob) {
     if (blob.type.includes('png')) return 'png';
     if (blob.type.includes('gif')) return 'gif';
     if (blob.type.includes('webp')) return 'webp';
     return 'jpg';
 }
 
-function triggerDownload(blobUrl, filename) {
-    const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
 // ── LIVE SEARCH ──
 function initSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const searchClear = document.getElementById('searchClear');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim().toLowerCase();
-        searchClear.classList.toggle('visible', query.length > 0);
-        filterProducts(query);
+    const input = document.getElementById('searchInput');
+    const clear = document.getElementById('searchClear');
+    if (!input) return;
+    input.addEventListener('input', () => {
+        const q = input.value.trim().toLowerCase();
+        clear.classList.toggle('visible', q.length > 0);
+        filterProducts(q);
     });
-
-    searchClear.addEventListener('click', () => {
-        searchInput.value = '';
-        searchClear.classList.remove('visible');
-        filterProducts('');
-        searchInput.focus();
+    clear.addEventListener('click', () => {
+        input.value = ''; clear.classList.remove('visible');
+        filterProducts(''); input.focus();
     });
 }
 
-function filterProducts(query) {
+function filterProducts(q) {
     const cards = document.querySelectorAll('.product-card[data-id]');
-    let visibleCount = 0;
-
+    let visible = 0;
     cards.forEach(card => {
-        const name = (card.dataset.name || '').toLowerCase();
-        const desc = (card.dataset.desc || '').toLowerCase();
-        const matches = !query || name.includes(query) || desc.includes(query);
-        card.dataset.hidden = matches ? 'false' : 'true';
-        if (matches) visibleCount++;
+        const match = !q || card.dataset.name.toLowerCase().includes(q) || card.dataset.desc.toLowerCase().includes(q);
+        card.dataset.hidden = match ? 'false' : 'true';
+        if (match) visible++;
     });
-
-    // Show "no results" if needed
-    const existing = document.getElementById('noResultsMsg');
-    if (existing) existing.remove();
-
-    if (query && visibleCount === 0) {
-        const noRes = document.createElement('div');
-        noRes.id = 'noResultsMsg';
-        noRes.className = 'no-results';
-        noRes.style.gridColumn = '1 / -1';
-        noRes.innerHTML = `
-            <i class="fas fa-search"></i>
-            <h3>No products found</h3>
-            <p>No results for "<strong>${escapeHtml(query)}</strong>". Try a different keyword.</p>
-        `;
-        document.getElementById('productsGrid').appendChild(noRes);
+    document.getElementById('noResultsMsg')?.remove();
+    if (q && visible === 0) {
+        const el = document.createElement('div');
+        el.id = 'noResultsMsg'; el.className = 'no-results';
+        el.innerHTML = `<i class="fas fa-search"></i><h3>No products found</h3><p>No results for "<strong>${esc(q)}</strong>"</p>`;
+        document.getElementById('productsGrid').appendChild(el);
     }
 }
 
@@ -973,9 +544,7 @@ function attachRevealBtns() {
                 globalUnlocked = true;
                 document.getElementById('unlockStatus').innerHTML = '<div class="unlock-success"><i class="fas fa-check-circle"></i> Wholesale prices unlocked!</div>';
                 renderProducts();
-            } else {
-                showToast('❌ Wrong password!');
-            }
+            } else { showToast('❌ Wrong password!'); }
         });
     });
 }
@@ -983,21 +552,17 @@ function attachRevealBtns() {
 function copyDesc(id) {
     const txt = document.getElementById(`desc-${id}`)?.innerText;
     if (!txt) return;
-    navigator.clipboard.writeText(txt).then(() => showToast('📋 Description copied!'));
+    navigator.clipboard.writeText(txt).then(() => showToast('📋 Copied!'));
 }
-
 function shareWhatsApp(id, name, price) {
     const msg = encodeURIComponent(`*${name}*\nMarket Price: Rs. ${price}\nFrom: Mart PK`);
     window.open(`https://wa.me/?text=${msg}`, '_blank');
 }
-
 function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2400);
 }
-
 function checkUnlock() {
     const val = document.getElementById('passInput').value;
     if (val === FIXED_PASSWORD) {
@@ -1005,18 +570,10 @@ function checkUnlock() {
         document.getElementById('unlockStatus').innerHTML = '<div class="unlock-success"><i class="fas fa-check-circle"></i> All wholesale prices are now visible!</div>';
         showToast('✅ Prices unlocked!');
         renderProducts();
-    } else if (val) {
-        showToast('❌ Wrong password!');
-    }
+    } else if (val) { showToast('❌ Wrong password!'); }
 }
-
-function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function escapeAttr(str) {
-    return String(str||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
+function esc(s) { return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function escAttr(s) { return String(s||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 
 document.getElementById('unlockBtn').addEventListener('click', checkUnlock);
 document.getElementById('passInput').addEventListener('keypress', e => { if(e.key==='Enter') checkUnlock(); });
