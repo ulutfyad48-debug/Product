@@ -2,446 +2,318 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mart PK | Admin Dashboard (Fast)</title>
+    <title>Mart PK | Admin - Full Cities + Categories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        :root {
-            --gold: #d4a017;
-            --gold-light: #f5c842;
-            --dark: #0f1923;
-            --dark2: #1a2535;
-            --green: #1a6b42;
-            --bg: #f0f4f8;
-            --card: #ffffff;
-            --border: #e2e8f0;
-            --red: #dc2626;
-            --blue: #3b82f6;
-            --text: #1a2535;
-            --muted: #64748b;
-            --shadow: 0 8px 20px rgba(0,0,0,0.08);
-            --radius: 1rem;
-        }
-        body {
-            background: var(--bg);
-            font-family: 'DM Sans', sans-serif;
-            color: var(--text);
-        }
-        .topbar {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 70%, var(--green) 100%);
-            padding: 0.8rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .topbar-brand {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .topbar-brand i { color: var(--gold-light); }
-        .badge {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            padding: 0.3rem 0.9rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        .wrapper {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.5rem;
-        }
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .stat-card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 1rem 1.2rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 0.7rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .stat-icon.gold { background: #fef3c7; color: var(--gold); }
-        .stat-icon.green { background: #dcfce7; color: var(--green); }
-        .stat-label { font-size: 0.7rem; color: var(--muted); }
-        .stat-value { font-size: 1.3rem; font-weight: 700; }
-        .main-grid {
-            display: grid;
-            grid-template-columns: 420px 1fr;
-            gap: 1.5rem;
-            align-items: start;
-        }
-        @media (max-width: 900px) {
-            .main-grid { grid-template-columns: 1fr; }
-        }
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 1.3rem;
-            box-shadow: var(--shadow);
-            margin-bottom: 1.2rem;
-        }
-        .card-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.6rem;
-            border-bottom: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .card-title i { color: var(--gold); }
-        .form-group { margin-bottom: 0.8rem; }
-        .form-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--muted);
-            margin-bottom: 0.2rem;
-            display: block;
-        }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 8px 14px;
-            border: 1.5px solid var(--border);
-            border-radius: 40px;
-            font-size: 0.85rem;
-            font-family: 'DM Sans', sans-serif;
-            transition: 0.2s;
-            background: #fafbfc;
-        }
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--gold);
-            background: white;
-        }
-        .form-textarea {
-            border-radius: 1rem;
-            resize: vertical;
-            min-height: 70px;
-        }
-        .price-row {
-            display: flex;
-            gap: 10px;
-        }
-        .price-row .form-group { flex: 1; }
-        .image-type-tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 0.8rem;
-            flex-wrap: wrap;
-        }
-        .tab-btn {
-            padding: 5px 12px;
-            border-radius: 40px;
-            border: 1.5px solid var(--border);
-            background: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .tab-btn.active {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: var(--dark);
-        }
-        .img-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-            background: #f8fafc;
-            border-radius: 40px;
-            padding: 3px 3px 3px 12px;
-            border: 1.5px solid var(--border);
-        }
-        .img-row .form-input {
-            border: none;
-            background: transparent;
-            padding: 6px 0;
-            margin: 0;
-            flex: 1;
-        }
-        .remove-img-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: none;
-            background: #fee2e2;
-            color: var(--red);
-            cursor: pointer;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 8px 18px;
-            border-radius: 40px;
-            border: none;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-primary { background: var(--dark); color: white; }
-        .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: var(--dark); }
-        .btn-outline { background: white; border: 1.5px solid var(--border); }
-        .btn-danger { background: var(--red); color: white; }
-        .btn-sm { padding: 4px 12px; font-size: 0.7rem; }
-        .btn-full { width: 100%; justify-content: center; margin-top: 0.3rem; }
-        .btn-row { display: flex; gap: 8px; margin-top: 0.8rem; }
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        .prod-item {
-            background: #f9fafb;
-            border-radius: 0.9rem;
-            overflow: hidden;
-            border: 1.5px solid var(--border);
-        }
-        .prod-img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-        }
-        .prod-body { padding: 0.7rem; }
-        .prod-name { font-weight: 700; font-size: 0.85rem; }
-        .prod-prices { font-size: 0.7rem; color: var(--muted); }
-        .prod-actions { display: flex; gap: 5px; padding: 0.5rem; }
-        .editing-banner {
-            background: #eff6ff;
-            border-radius: 0.8rem;
-            padding: 0.6rem 1rem;
-            margin-bottom: 1rem;
-            display: none;
-            justify-content: space-between;
-        }
-        .editing-banner.active { display: flex; }
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            opacity: 0;
-            transition: 0.2s;
-            z-index: 999;
-            pointer-events: none;
-        }
-        .toast.show { opacity: 1; }
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--border);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin: 2rem auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .folder-info {
-            background: #eff6ff;
-            border-radius: 0.7rem;
-            padding: 0.6rem;
-            font-size: 0.7rem;
-            margin-bottom: 0.6rem;
-        }
-        input[type="file"] { display: none; }
-        @media (max-width: 600px) {
-            .wrapper { padding: 1rem; }
-            .price-row { flex-direction: column; }
-        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background:#f1f5f9;font-family:'Segoe UI',sans-serif;}
+        .navbar{background:#0f172a;color:white;padding:1rem;display:flex;justify-content:space-between;flex-wrap:wrap;}
+        .container{max-width:1400px;margin:auto;padding:1rem;}
+        .grid{display:grid;grid-template-columns:400px 1fr;gap:1.5rem;}
+        @media (max-width:800px){.grid{grid-template-columns:1fr;}}
+        .card{background:white;border-radius:1rem;padding:1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+        .card h3{margin-bottom:0.8rem;border-left:4px solid #eab308;padding-left:0.5rem;}
+        input,select,textarea{width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:2rem;margin-bottom:8px;font-size:14px;}
+        .btn{background:#0f172a;color:white;border:none;padding:8px 16px;border-radius:2rem;cursor:pointer;}
+        .btn-gold{background:#eab308;color:#0f172a;}
+        .btn-sm{padding:4px 12px;font-size:12px;}
+        .product-card,.category-chip{border:1px solid #e2e8f0;border-radius:1rem;padding:0.5rem;margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center;}
+        .warehouse-item{display:flex;justify-content:space-between;background:#f8fafc;padding:5px 10px;border-radius:2rem;margin-bottom:5px;}
+        .toast{position:fixed;bottom:20px;left:20px;background:#0f172a;color:white;padding:8px 16px;border-radius:2rem;display:none;z-index:1000;}
+        .category-list{max-height:200px;overflow-y:auto;}
     </style>
 </head>
 <body>
-<div class="topbar">
-    <div class="topbar-brand"><i class="fas fa-crown"></i> Mart PK Admin</div>
-    <div class="badge"><i class="fas fa-database"></i> Fast Mode</div>
-    <div class="badge" id="prodCountBadge"><i class="fas fa-box"></i> 0 Products</div>
+<div class="navbar">
+    <div><i class="fas fa-crown"></i> Mart PK Admin</div>
+    <div><span id="productCount">0</span> Products | <span id="cityCount">0</span> Cities</div>
 </div>
-<div class="wrapper">
-    <div class="stats-row">
-        <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-boxes"></i></div><div><div class="stat-label">Total Products</div><div class="stat-value" id="statTotal">—</div></div></div>
-        <div class="stat-card"><div class="stat-icon green"><i class="fas fa-images"></i></div><div><div class="stat-label">Total Images</div><div class="stat-value" id="statImages">—</div></div></div>
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-database"></i></div><div><div class="stat-label">DB Status</div><div class="stat-value" id="statDB" style="font-size:0.85rem;">Ready</div></div></div>
-    </div>
-    <div class="main-grid">
+<div class="container">
+    <div class="grid">
+        <div>
+            <!-- Categories Management -->
+            <div class="card">
+                <h3><i class="fas fa-tags"></i> Manage Categories</h3>
+                <div style="display:flex;gap:5px;">
+                    <input type="text" id="newCategoryName" placeholder="New category name" style="flex:1;">
+                    <button id="addCategoryBtn" class="btn btn-sm">Add</button>
+                </div>
+                <div id="categoriesList" class="category-list" style="margin-top:10px;">Loading...</div>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-plus"></i> Add/Edit Product</h3>
+                <input type="text" id="prodName" placeholder="Product Name *">
+                <textarea id="prodDesc" rows="2" placeholder="Description"></textarea>
+                <input type="number" id="marketPrice" placeholder="Market Price (PKR) *">
+                <input type="number" id="wholesalePrice" placeholder="Wholesale Price (PKR) *">
+                <input type="number" id="weight" step="0.1" placeholder="Weight (KG) *">
+                <select id="categorySelect"></select>
+                <input type="text" id="pickupCode" placeholder="Pickup Address Code *">
+                <select id="pickupCitySelect"></select>
+                <div id="imageUrls"></div>
+                <button onclick="addImageField()" class="btn" style="background:#475569;">+ Add Image URL</button>
+                <button id="saveBtn" class="btn btn-gold" style="width:100%;margin-top:10px;">Save Product</button>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-warehouse"></i> Warehouses</h3>
+                <div id="warehouseList"></div>
+                <div style="display:flex;gap:5px;"><input type="text" id="newWarehouse" placeholder="New code"><button id="addWarehouseBtn" class="btn btn-sm">Add</button></div>
+                <hr>
+                <h3>Settings</h3>
+                <input type="text" id="defaultPickupCode" placeholder="Default Pickup Code">
+                <select id="defaultPickupCitySelect"></select>
+                <button id="saveSettingsBtn" class="btn btn-gold">Save Settings</button>
+            </div>
+        </div>
         <div>
             <div class="card">
-                <div class="card-title"><i class="fas fa-plus-circle"></i> Add / Edit Product</div>
-                <div class="editing-banner" id="editingBanner"><span><i class="fas fa-pencil-alt"></i> Editing mode</span><button class="btn btn-outline btn-sm" id="cancelBtn">Cancel</button></div>
-                <div class="form-group"><label class="form-label">Product Name *</label><input class="form-input" id="prodName" placeholder="Product name"></div>
-                <div class="form-group"><label class="form-label">Description (optional)</label><textarea class="form-input form-textarea" id="prodDesc" placeholder="Short description..."></textarea></div>
-                <div class="price-row">
-                    <div class="form-group"><label class="form-label">Market Price (PKR) *</label><input class="form-input" id="marketPrice" type="number" placeholder="2500"></div>
-                    <div class="form-group"><label class="form-label">Wholesale Price (PKR) *</label><input class="form-input" id="specialPrice" type="number" placeholder="1800"></div>
-                </div>
-                <div class="form-group"><label class="form-label"><i class="fas fa-map-marker-alt"></i> Pickup Location *</label><input class="form-input" id="location" placeholder="e.g., Shop #12, Main Market, Lahore"></div>
-                
-                <!-- IMAGE SECTION SIMPLIFIED -->
-                <div class="form-group"><label class="form-label">Images (URLs or Drive links)</label>
-                    <div class="image-type-tabs">
-                        <button class="tab-btn active" id="tab-url" onclick="switchTab('url')"><i class="fas fa-link"></i> URL</button>
-                        <button class="tab-btn" id="tab-drive" onclick="switchTab('drive')"><i class="fab fa-google-drive"></i> Drive Links</button>
-                    </div>
-                    <div id="tab-content-url"><div id="urlInputs"></div><button class="btn btn-outline btn-sm" onclick="addUrlField()">+ Add URL</button></div>
-                    <div id="tab-content-drive" style="display:none;"><div id="driveInputs"></div><button class="btn btn-outline btn-sm" onclick="addDriveField()">+ Add Drive Link</button><div class="folder-info" style="margin-top:6px;"><i class="fas fa-info-circle"></i> Paste Google Drive sharing links (anyone with link can view)</div></div>
-                </div>
-                <div id="allImagesPreview" style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;"></div>
-                <div class="btn-row"><button class="btn btn-gold btn-full" id="saveBtn"><i class="fas fa-save"></i> Save Product</button></div>
+                <h3><i class="fas fa-boxes"></i> Products <button onclick="loadProducts()" class="btn btn-sm" style="float:right;">Refresh</button></h3>
+                <div id="productsList">Loading...</div>
             </div>
-            <div class="card"><div class="card-title"><i class="fas fa-lock"></i> Wholesale Password</div><div style="text-align:center;padding:10px;background:#fef3c7;border-radius:1rem;"><strong style="font-size:1.3rem;">786</strong><div style="font-size:0.75rem;">Customers need this to see wholesale prices</div></div></div>
-            <div class="card"><div class="card-title"><i class="fas fa-trash-alt"></i> Danger Zone</div><button class="btn btn-danger btn-sm" id="deleteAllBtn"><i class="fas fa-trash"></i> Delete ALL Products</button></div>
+            <div class="card">
+                <h3><i class="fas fa-truck"></i> Recent Orders</h3>
+                <div id="ordersList">Loading...</div>
+            </div>
         </div>
-        <div class="card"><div class="card-title"><i class="fas fa-boxes"></i> All Products <button class="btn btn-outline btn-sm" style="margin-left:auto;" onclick="loadProducts()"><i class="fas fa-sync"></i> Refresh</button></div><div id="productsList"><div class="spinner"></div></div></div>
     </div>
 </div>
-<div class="toast" id="toast"></div>
+<div id="toast" class="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-    const DB_URL = "https://mart-c4baa-default-rtdb.firebaseio.com/";
-    let currentEditId = null, currentEditKey = null;
-    let urlFields = [''], driveFields = [''];
-    let activeTab = 'url';
+    const firebaseConfig = { databaseURL: "https://mart-c4baa-default-rtdb.firebaseio.com/" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    async function dbFetch(path) { const r = await fetch(`${DB_URL}${path}.json`); if(!r.ok)throw new Error(r.status); return r.json(); }
-    async function dbPut(path, data) { const r = await fetch(`${DB_URL}${path}.json`,{method:'PUT',body:JSON.stringify(data)}); if(!r.ok)throw new Error(r.status); return r.json(); }
-    async function dbPost(path, data) { const r = await fetch(`${DB_URL}${path}.json`,{method:'POST',body:JSON.stringify(data)}); if(!r.ok)throw new Error(r.status); return r.json(); }
-    async function dbDelete(path) { await fetch(`${DB_URL}${path}.json`,{method:'DELETE'}); }
+    // Complete Pakistan cities (270+)
+    const allCities = [
+        "Karachi","Hyderabad","Sukkur","Larkana","Nawabshah","Mirpur Khas","Khairpur","Dadu","Badin","Thatta","Ghotki","Sanghar","Umerkot","Shikarpur","Jacobabad","Kashmore","Kandhkot","Tando Allahyar","Tando M Khan","Matiari","Jamshoro","Sehwan","Mehar","Ratodero","Gambat","Ranipur","Pano Aqil","Rohri","Kotri","Hala",
+        "Lahore","Rawalpindi","Faisalabad","Multan","Gujranwala","Sialkot","Bahawalpur","Sargodha","Sheikhupura","Rahim Yar Khan","Jhang","Dera Ghazi Khan","Kasur","Okara","Wah Cantt","Gujrat","Mandi Bahauddin","Chiniot","Hafizabad","Jhelum","Chakwal","Attock","Mianwali","Khushab","Bhakkar","Layyah","Muzaffargarh","Khanewal","Vehari","Lodhran","Pakpattan","Sahiwal","Toba Tek Singh","Narowal","Nankana","Murree","Taxila","Kamoke","Phalia","Daska","Pasrur","Zafarwal","Chunian","Renala Khurd","Burewala","Arifwala","Mailsi","Kabirwala","Mian Channu","Jahanian","Pir Mahal","Shorkot","Tandlianwala","Sammundri","Jaranwala","Gojra","Kamalia","Kot Addu","Alipur","Shujabad","Jalalpur","Gujar Khan","Kallar Syedan","Kahuta","Fateh Jang","Hasan Abdal","Hazro","Talagang","Kallur Kot","Taunsa","Kot Momin","Bhalwal","Shahpur","Farooqabad","Muridke","Pattoki","Phool Nagar",
+        "Peshawar","Abbottabad","Mardan","Swat","Mingora","Kohat","Dera Ismail Khan","Bannu","Charsadda","Mansehra","Nowshera","Swabi","Haripur","Tank","Lakki Marwat","Batagram","Buner","Shangla","Kohistan","Hangu","Karak","Chitral","Dir","Malakand","Timergara","Kalam","Madyan","Bahrain","Matta","Kabal","Khwazakhela","Alpuri","Besham","Dasu","Saidu Sharif","Takht Bhai","Risalpur","Havelian","Nathia Gali",
+        "Quetta","Gwadar","Turbat","Khuzdar","Chaman","Sibi","Loralai","Zhob","Nushki","Mastung","Kalat","Lasbela","Hub","Panjgur","Kech","Awaran","Barkhan","Kohlu","Dera Bugti","Jafarabad","Jhal Magsi","Kachhi","Nasirabad","Sohbatpur","Washuk","Kharan","Chagai","Qilla Abdullah","Pishin","Ziarat","Harnai",
+        "Islamabad","Muzaffarabad","Mirpur","Kotli","Bhimber","Rawalakot","Bagh","Haveli","Sudhnoti","Neelum","Gilgit","Skardu","Hunza","Nagar","Ghanche","Shigar","Astore","Diamer","Ghizer","Kharmang"
+    ].sort();
 
-    function convertDriveLink(url) { const m = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/); return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : url; }
-    function collectImages() { let imgs = []; urlFields.forEach(u=>{ if(u.trim()) imgs.push(u.trim()); }); driveFields.forEach(u=>{ if(u.trim()) imgs.push(convertDriveLink(u.trim())); }); return imgs.length?imgs:['https://placehold.co/400x200?text=No+Image']; }
-    function renderUrlFields() { const c=document.getElementById('urlInputs'); c.innerHTML=''; urlFields.forEach((val,i)=>{ const row=document.createElement('div'); row.className='img-row'; row.innerHTML=`<input class="form-input" placeholder="https://..." value="${escapeAttr(val)}" data-idx="${i}"><button class="remove-img-btn" data-idx="${i}">✖</button>`; c.appendChild(row); }); attachUrlEvents(); }
-    function attachUrlEvents(){ document.querySelectorAll('#urlInputs .remove-img-btn').forEach(btn=>{ btn.onclick=()=>{ let idx=parseInt(btn.dataset.idx); urlFields.splice(idx,1); if(!urlFields.length) urlFields=['']; renderUrlFields(); }; }); document.querySelectorAll('#urlInputs .form-input').forEach(inp=>{ inp.oninput=e=>{ let idx=parseInt(e.target.dataset.idx); urlFields[idx]=e.target.value; }; }); }
-    function renderDriveFields() { const c=document.getElementById('driveInputs'); c.innerHTML=''; driveFields.forEach((val,i)=>{ const row=document.createElement('div'); row.className='img-row'; row.innerHTML=`<input class="form-input" placeholder="https://drive.google.com/file/d/..." value="${escapeAttr(val)}" data-idx="${i}"><button class="remove-img-btn" data-idx="${i}">✖</button>`; c.appendChild(row); }); attachDriveEvents(); }
-    function attachDriveEvents(){ document.querySelectorAll('#driveInputs .remove-img-btn').forEach(btn=>{ btn.onclick=()=>{ let idx=parseInt(btn.dataset.idx); driveFields.splice(idx,1); if(!driveFields.length) driveFields=['']; renderDriveFields(); }; }); document.querySelectorAll('#driveInputs .form-input').forEach(inp=>{ inp.oninput=e=>{ let idx=parseInt(e.target.dataset.idx); driveFields[idx]=e.target.value; }; }); }
-    function addUrlField(){ urlFields.push(''); renderUrlFields(); }
-    function addDriveField(){ driveFields.push(''); renderDriveFields(); }
-    function switchTab(tab){ activeTab=tab; document.getElementById('tab-content-url').style.display=tab==='url'?'block':'none'; document.getElementById('tab-content-drive').style.display=tab==='drive'?'block':'none'; document.getElementById('tab-url').classList.toggle('active',tab==='url'); document.getElementById('tab-drive').classList.toggle('active',tab==='drive'); }
+    let categories = [], products = [], currentEditKey = null, imageUrls = [''], warehouses = [];
 
-    async function getNextProductId() { const data = await dbFetch('products'); if(!data) return 1; const ids = Object.values(data).map(p=>p.id).filter(id=>typeof id==='number'); return ids.length ? Math.max(...ids)+1 : 1; }
-    async function saveProduct() {
-        let name = document.getElementById('prodName').value.trim();
-        let desc = document.getElementById('prodDesc').value.trim() || "Premium product";
-        let marketPrice = parseFloat(document.getElementById('marketPrice').value);
-        let specialPrice = parseFloat(document.getElementById('specialPrice').value);
-        let location = document.getElementById('location').value.trim();
-        if(!name || isNaN(marketPrice) || isNaN(specialPrice) || !location) { showToast("❌ Name, both prices & location required!"); return; }
-        let images = collectImages();
-        let id = currentEditId ? currentEditId : await getNextProductId();
-        let productData = { id, name, desc, marketPrice, specialPrice, location, images };
-        try {
-            let btn = document.getElementById('saveBtn'); btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Saving...';
-            if(currentEditKey) await dbPut(`products/${currentEditKey}`, productData);
-            else { let newRef = await dbPost('products', productData); currentEditKey = newRef.name; }
-            showToast(currentEditKey ? "✅ Updated!" : "✅ Added!");
-            resetForm();
-            await loadProducts();
-        } catch(e){ showToast("❌ Error: "+e.message); } finally{ let btn=document.getElementById('saveBtn'); btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> Save Product'; }
-    }
+    function showToast(msg){ let t=document.getElementById('toast'); t.innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
 
-    async function loadProducts() {
-        const container = document.getElementById('productsList');
-        container.innerHTML = '<div class="spinner"></div>';
-        try {
-            const data = await dbFetch('products');
-            if(!data || Object.keys(data).length===0){ container.innerHTML='<p style="text-align:center;padding:1rem;">No products</p>'; document.getElementById('statTotal').textContent='0'; document.getElementById('statImages').textContent='0'; document.getElementById('prodCountBadge').innerHTML='<i class="fas fa-box"></i> 0 Products'; return; }
-            let entries = Object.entries(data);
-            let totalImgs = 0, html = '<div class="products-grid">';
-            for(let [key, prod] of entries){
-                let imgs = prod.images||[];
-                totalImgs += imgs.length;
-                let firstImg = imgs[0] || 'https://placehold.co/400x200?text=No+Image';
-                html += `<div class="prod-item"><img class="prod-img" src="${firstImg}" loading="lazy" onerror="this.src='https://placehold.co/400x200?text=Error'"><div class="prod-body"><div class="prod-name">${escapeHtml(prod.name)}</div><div class="prod-prices"><span>Market: Rs.${prod.marketPrice?.toLocaleString()}</span> | <strong>Wholesale: Rs.${prod.specialPrice?.toLocaleString()}</strong></div><div style="font-size:0.7rem;color:var(--green);"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(prod.location||'No location')}</div><div style="font-size:0.65rem;color:gray;">📷 ${imgs.length} img(s)</div></div><div class="prod-actions"><button class="btn btn-outline btn-sm" onclick="editProduct('${key}',${prod.id})"><i class="fas fa-edit"></i> Edit</button><button class="btn btn-danger btn-sm" onclick="deleteProduct('${key}')"><i class="fas fa-trash"></i> Del</button></div></div>`;
+    function populateCitySelects(){
+        ['pickupCitySelect', 'defaultPickupCitySelect'].forEach(id => {
+            let sel = document.getElementById(id);
+            if(sel){
+                sel.innerHTML = '<option value="">Select City</option>';
+                allCities.forEach(city => sel.innerHTML += `<option value="${city}">${city}</option>`);
             }
-            html += '</div>'; container.innerHTML = html;
-            document.getElementById('statTotal').textContent = entries.length;
-            document.getElementById('statImages').textContent = totalImgs;
-            document.getElementById('prodCountBadge').innerHTML = `<i class="fas fa-box"></i> ${entries.length} Products`;
-        } catch(e){ container.innerHTML=`<div style="color:red;padding:1rem;">Error: ${e.message}<br>Set Firebase rules: {".read":true,".write":true}</div>`; document.getElementById('statDB').textContent='Error'; }
+        });
+        document.getElementById('cityCount').innerText = allCities.length;
     }
 
-    async function editProduct(key, id) {
-        try {
-            const data = await dbFetch('products');
-            let prod = data[key];
-            if(!prod) return;
-            currentEditKey = key; currentEditId = prod.id;
-            document.getElementById('prodName').value = prod.name||'';
-            document.getElementById('prodDesc').value = prod.desc||'';
-            document.getElementById('marketPrice').value = prod.marketPrice||'';
-            document.getElementById('specialPrice').value = prod.specialPrice||'';
-            document.getElementById('location').value = prod.location||'';
-            let images = prod.images || [];
-            urlFields = []; driveFields = [];
-            images.forEach(img=>{ if(img.includes('lh3.googleusercontent.com') || img.includes('drive.google.com')) driveFields.push(img); else urlFields.push(img); });
-            if(!urlFields.length) urlFields=['']; if(!driveFields.length) driveFields=[''];
-            renderUrlFields(); renderDriveFields();
-            document.getElementById('editingBanner').classList.add('active');
-            window.scrollTo({top:0,behavior:'smooth'});
-        } catch(e){ showToast("Failed to load product"); }
+    // ========== CATEGORY MANAGEMENT ==========
+    async function loadCategoriesAndRender(){
+        const snap = await db.ref('categories').once('value');
+        const data = snap.val();
+        categories = data ? Object.keys(data).map(key=>({key, name: data[key].name})) : [];
+        // Update category select dropdown in product form
+        const catSelect = document.getElementById('categorySelect');
+        catSelect.innerHTML = '<option value="">Select Category</option>';
+        categories.forEach(c=>catSelect.innerHTML+=`<option value="${c.key}">${escapeHtml(c.name)}</option>`);
+        // Render list in category management
+        const container = document.getElementById('categoriesList');
+        if(categories.length===0){ container.innerHTML='<p>No categories yet. Add one above.</p>'; return; }
+        let html = '';
+        categories.forEach(cat=>{
+            html += `<div class="category-chip"><span>${escapeHtml(cat.name)}</span><button class="btn btn-sm" style="background:#dc2626;" onclick="deleteCategory('${cat.key}')">Delete</button></div>`;
+        });
+        container.innerHTML = html;
     }
 
-    async function deleteProduct(key){ if(confirm('Delete permanently?')){ await dbDelete(`products/${key}`); if(currentEditKey===key) resetForm(); loadProducts(); showToast('Deleted'); } }
-    async function deleteAllProducts(){ if(confirm('⚠️ DELETE ALL PRODUCTS?')){ await dbPut('products',{}); resetForm(); loadProducts(); showToast('All products deleted'); } }
+    window.deleteCategory = async function(key){
+        if(confirm('Delete category? Products in this category will remain but show as uncategorized.')){
+            await db.ref(`categories/${key}`).remove();
+            loadCategoriesAndRender();
+            showToast('Category deleted');
+        }
+    };
 
+    document.getElementById('addCategoryBtn').onclick = async () => {
+        let name = document.getElementById('newCategoryName').value.trim();
+        if(!name){ showToast('Enter category name'); return; }
+        await db.ref('categories').push({ name });
+        document.getElementById('newCategoryName').value = '';
+        loadCategoriesAndRender();
+        showToast('Category added');
+    };
+    // ========================================
+
+    function renderImageFields(){
+        const container = document.getElementById('imageUrls');
+        container.innerHTML = '';
+        imageUrls.forEach((url,idx)=>{
+            const div = document.createElement('div');
+            div.style.display='flex'; div.style.gap='5px'; div.style.marginBottom='5px';
+            div.innerHTML = `<input type="text" value="${escapeHtml(url)}" placeholder="Image URL" class="img-url" data-idx="${idx}" style="flex:1;"><button class="remove-img" data-idx="${idx}" style="background:#ef4444;color:white;border:none;border-radius:2rem;padding:0 10px;">X</button>`;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.remove-img').forEach(btn=>{
+            btn.onclick = (e)=>{
+                let idx = parseInt(btn.dataset.idx);
+                imageUrls.splice(idx,1);
+                if(imageUrls.length===0) imageUrls=[''];
+                renderImageFields();
+            };
+        });
+        document.querySelectorAll('.img-url').forEach(inp=>{
+            inp.oninput = (e)=>{ let idx = parseInt(inp.dataset.idx); imageUrls[idx]=inp.value; };
+        });
+    }
+    function addImageField(){ imageUrls.push(''); renderImageFields(); }
+
+    async function saveProduct(){
+        let name = document.getElementById('prodName').value.trim();
+        let marketPrice = parseFloat(document.getElementById('marketPrice').value);
+        let wholesalePrice = parseFloat(document.getElementById('wholesalePrice').value);
+        let weight = parseFloat(document.getElementById('weight').value);
+        let categoryKey = document.getElementById('categorySelect').value;
+        let pickupCode = document.getElementById('pickupCode').value.trim();
+        let pickupCity = document.getElementById('pickupCitySelect').value;
+        if(!name || isNaN(marketPrice) || isNaN(wholesalePrice) || isNaN(weight) || !pickupCode || !pickupCity){
+            showToast("All fields required"); return;
+        }
+        let images = imageUrls.filter(u=>u.trim()!='');
+        if(images.length===0) images=['https://placehold.co/400x200'];
+        let prodData = { name, desc: document.getElementById('prodDesc').value, marketPrice, wholesalePrice, weight, categoryKey, pickupCode, pickupCity, images, updatedAt: Date.now() };
+        if(currentEditKey) await db.ref(`products/${currentEditKey}`).update(prodData);
+        else await db.ref('products').push(prodData);
+        showToast("Saved"); resetForm(); loadProducts();
+    }
+
+    async function loadProducts(){
+        const snap = await db.ref('products').once('value');
+        const data = snap.val();
+        products = data ? Object.keys(data).map(k=>({key:k, ...data[k]})) : [];
+        document.getElementById('productCount').innerText = products.length;
+        const container = document.getElementById('productsList');
+        if(products.length===0){ container.innerHTML='<p>No products</p>'; return; }
+        let html = '';
+        products.forEach(p=>{
+            const cat = categories.find(c=>c.key===p.categoryKey)?.name||'Uncategorized';
+            html += `<div class="product-card"><div><b>${escapeHtml(p.name)}</b> | ₹${p.marketPrice} / ₹${p.wholesalePrice} | ${p.weight}KG<br>
+            Pickup: ${p.pickupCode} - ${p.pickupCity}<br>Category: ${cat}</div>
+            <div><button onclick="editProduct('${p.key}')" class="btn btn-sm">Edit</button>
+            <button onclick="deleteProduct('${p.key}')" class="btn btn-sm" style="background:#dc2626;">Delete</button></div></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function editProduct(key){
+        let p = products.find(x=>x.key===key);
+        if(!p) return;
+        currentEditKey = key;
+        document.getElementById('prodName').value = p.name;
+        document.getElementById('prodDesc').value = p.desc||'';
+        document.getElementById('marketPrice').value = p.marketPrice;
+        document.getElementById('wholesalePrice').value = p.wholesalePrice;
+        document.getElementById('weight').value = p.weight;
+        document.getElementById('categorySelect').value = p.categoryKey||'';
+        document.getElementById('pickupCode').value = p.pickupCode;
+        document.getElementById('pickupCitySelect').value = p.pickupCity;
+        imageUrls = p.images ? [...p.images] : [''];
+        renderImageFields();
+        window.scrollTo({top:0});
+    }
+
+    async function deleteProduct(key){ if(confirm('Delete?')){ await db.ref(`products/${key}`).remove(); if(currentEditKey===key) resetForm(); loadProducts(); showToast('Deleted'); } }
     function resetForm(){
-        currentEditId=null; currentEditKey=null;
-        document.getElementById('prodName').value=''; document.getElementById('prodDesc').value='';
-        document.getElementById('marketPrice').value=''; document.getElementById('specialPrice').value='';
-        document.getElementById('location').value='';
-        urlFields=['']; driveFields=['']; renderUrlFields(); renderDriveFields();
-        document.getElementById('editingBanner').classList.remove('active');
+        currentEditKey=null;
+        document.getElementById('prodName').value='';
+        document.getElementById('prodDesc').value='';
+        document.getElementById('marketPrice').value='';
+        document.getElementById('wholesalePrice').value='';
+        document.getElementById('weight').value='';
+        document.getElementById('categorySelect').value='';
+        document.getElementById('pickupCode').value='';
+        document.getElementById('pickupCitySelect').value='';
+        imageUrls=['']; renderImageFields();
     }
 
-    function showToast(msg){ let t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
-    function escapeHtml(str){ if(!str)return ''; return String(str).replace(/[&<>]/g,function(m){if(m==='&')return '&amp;';if(m==='<')return '&lt;';if(m==='>')return '&gt;';return m;}); }
-    function escapeAttr(s){ return String(s||'').replace(/["']/g, ''); }
+    async function loadWarehouses(){
+        const snap = await db.ref('settings/warehouses').once('value');
+        warehouses = snap.val() || [];
+        const container = document.getElementById('warehouseList');
+        container.innerHTML = '';
+        warehouses.forEach(wh => {
+            const div = document.createElement('div'); div.className='warehouse-item';
+            div.innerHTML = `<span>${escapeHtml(wh)}</span><button data-code="${wh}" class="removeWhBtn" style="background:#ef4444;border:none;border-radius:2rem;color:white;padding:0 10px;">✖</button>`;
+            container.appendChild(div);
+        });
+        document.querySelectorAll('.removeWhBtn').forEach(btn=>{
+            btn.onclick = async ()=>{
+                let code = btn.dataset.code;
+                let newWh = warehouses.filter(w=>w!==code);
+                await db.ref('settings/warehouses').set(newWh);
+                loadWarehouses();
+            };
+        });
+    }
 
-    document.getElementById('saveBtn').addEventListener('click', saveProduct);
-    document.getElementById('cancelBtn').addEventListener('click', resetForm);
-    document.getElementById('deleteAllBtn').addEventListener('click', deleteAllProducts);
-    renderUrlFields(); renderDriveFields(); switchTab('url');
-    loadProducts();
+    document.getElementById('addWarehouseBtn').onclick = async ()=>{
+        let newWh = document.getElementById('newWarehouse').value.trim();
+        if(newWh && !warehouses.includes(newWh)){
+            warehouses.push(newWh);
+            await db.ref('settings/warehouses').set(warehouses);
+            loadWarehouses();
+            document.getElementById('newWarehouse').value='';
+            showToast('Warehouse added');
+        }
+    };
+
+    async function loadSettings(){
+        const snap = await db.ref('settings').once('value');
+        let data = snap.val()||{};
+        document.getElementById('defaultPickupCode').value = data.defaultPickupCode||'';
+        document.getElementById('defaultPickupCitySelect').value = data.defaultPickupCity||'';
+        if(data.warehouses) warehouses = data.warehouses;
+        loadWarehouses();
+    }
+    document.getElementById('saveSettingsBtn').onclick = async ()=>{
+        let defCode = document.getElementById('defaultPickupCode').value.trim();
+        let defCity = document.getElementById('defaultPickupCitySelect').value;
+        await db.ref('settings/defaultPickupCode').set(defCode);
+        await db.ref('settings/defaultPickupCity').set(defCity);
+        showToast('Settings saved');
+    };
+
+    async function loadOrders(){
+        const snap = await db.ref('orders').once('value');
+        let orders = snap.val() ? Object.values(snap.val()).slice(-20).reverse() : [];
+        const container = document.getElementById('ordersList');
+        if(!orders.length){ container.innerHTML='<p>No orders</p>'; return; }
+        let html = '';
+        orders.forEach(o=>{
+            html += `<div style="border-bottom:1px solid #ccc;padding:5px;"><b>${o.orderRef}</b> - ${o.customerName} | ${o.city}<br>Tracking: ${o.trackingNumber} | Total: ₹${o.totalAmount}</div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    document.getElementById('saveBtn').onclick = saveProduct;
+    window.addImageField = addImageField;
+    window.editProduct = editProduct;
+    window.deleteProduct = deleteProduct;
+
+    function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    (async function init(){
+        populateCitySelects();
+        await loadCategoriesAndRender();
+        await loadProducts();
+        await loadSettings();
+        await loadOrders();
+        renderImageFields();
+    })();
 </script>
 </body>
 </html>
