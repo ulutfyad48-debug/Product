@@ -32,13 +32,19 @@
         @media (min-width: 640px) and (max-width: 1023px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 639px) { .products-grid { grid-template-columns: 1fr; } }
 
-        .product-card { background: var(--bg-card); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); transition: all 0.3s ease; display: flex; flex-direction: column; }
+        .product-card { background: var(--bg-card); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; }
         .product-card:hover { transform: translateY(-5px); border-color: var(--primary); }
-        .product-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border); background: #0f172a; }
+
+        /* Image gallery */
+        .product-images { display: flex; overflow-x: auto; gap: 8px; padding: 10px; background: #0f172a; border-bottom: 1px solid var(--border); scroll-snap-type: x mandatory; }
+        .product-images img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; flex-shrink: 0; scroll-snap-align: start; transition: 0.2s; border: 1px solid var(--border); }
+        .product-images img:hover { border-color: var(--primary); transform: scale(1.02); }
+        .main-image { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border); cursor: pointer; }
+
         .product-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
         .product-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
         .product-desc { font-size: 0.85rem; color: var(--text-muted); margin: 8px 0; line-height: 1.4; }
-        .see-more-btn { background: none; border: none; color: var(--primary); font-size: 0.75rem; cursor: pointer; font-weight: 600; padding: 0; margin-top: 4px; text-align: left; display: inline-block; }
+        .see-more-btn { background: none; border: none; color: var(--primary); font-size: 0.75rem; cursor: pointer; font-weight: 600; padding: 0; display: inline-block; }
         .market-price { font-weight: 800; color: var(--primary); font-size: 1.3rem; margin: 12px 0 10px; }
         .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .add-btn:hover { background: #0d9668; }
@@ -51,6 +57,11 @@
         .checkout-input, .city-datalist { width: 100%; padding: 12px; background: var(--bg-body); border: 1px solid var(--border); color: white; border-radius: 0.75rem; margin-bottom: 12px; outline: none; }
         .order-btn { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 1rem; font-weight: bold; border: none; cursor: pointer; margin-top: 15px; font-size: 1rem; }
         .clear-cart-btn { background: #dc2626; color: white; border: none; padding: 8px 12px; border-radius: 0.5rem; cursor: pointer; margin-bottom: 10px; width: 100%; font-weight: bold; }
+
+        /* Modal for image full view */
+        .image-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
+        .image-modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
+        .close-image-modal { position: absolute; top: 20px; right: 30px; font-size: 2rem; color: white; cursor: pointer; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
         .modal-content { background: var(--bg-card); max-width: 500px; width: 90%; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid var(--primary); position: relative; }
@@ -75,6 +86,7 @@
     <div id="productsGrid" class="products-grid"><div style="text-align:center; padding:3rem;">Loading products...</div></div>
 </div>
 
+<!-- Cart Drawer (same as before) -->
 <div id="cartDrawer" class="cart-overlay">
     <button class="close-cart" onclick="toggleCart()">&times;</button>
     <h3 style="margin-bottom: 20px;"><i class="fas fa-shopping-basket"></i> Your Basket</h3>
@@ -102,12 +114,19 @@
     <button id="placeOrderBtn" class="order-btn">✅ Confirm Order (Cash on Delivery)</button>
 </div>
 
+<!-- Description Modal -->
 <div id="descModal" class="modal">
     <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <span class="close-modal" onclick="closeDescModal()">&times;</span>
         <h3 id="modalTitle">Description</h3>
         <p id="modalDesc"></p>
     </div>
+</div>
+
+<!-- Fullscreen Image Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="close-image-modal">&times;</span>
+    <img id="fullImage" src="">
 </div>
 
 <div id="toastMsg" class="toast"></div>
@@ -138,12 +157,18 @@
 
     function toggleCart() { document.getElementById('cartDrawer').classList.toggle('active'); }
     function showToast(msg) { let t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
-    function closeModal() { document.getElementById('descModal').style.display = 'none'; }
+    function closeDescModal() { document.getElementById('descModal').style.display = 'none'; }
+    function closeImageModal() { document.getElementById('imageModal').style.display = 'none'; }
 
     window.showDescription = function(title, desc) {
         document.getElementById('modalTitle').innerText = title;
         document.getElementById('modalDesc').innerText = desc || "No description added yet.";
         document.getElementById('descModal').style.display = 'flex';
+    };
+
+    window.showFullImage = function(src) {
+        document.getElementById('fullImage').src = src;
+        document.getElementById('imageModal').style.display = 'flex';
     };
 
     async function loadCitiesForCustomer() {
@@ -162,19 +187,16 @@
         } catch (e) { console.error("City API error:", e); }
     }
 
-    // ✅ FIXED DELIVERY CHARGE LOGIC
     function calculateDeliveryCharge() {
         const cityInput = document.getElementById('deliveryCityInput').value;
         const totalWeight = cart.reduce((s, i) => s + ((i.weight || 0) * i.qty), 0);
-        if (!cityInput || totalWeight === 0) { 
-            deliveryCharge = 0; 
-        } else {
+        if (!cityInput || totalWeight === 0) { deliveryCharge = 0; }
+        else {
             if (totalWeight <= 0.5) deliveryCharge = 190;
             else if (totalWeight <= 1) deliveryCharge = 240;
             else if (totalWeight <= 3) deliveryCharge = 330;
             else if (totalWeight <= 5) deliveryCharge = 500;
             else {
-                // Above 5 KG: base 500 + extra kg * 110
                 let extraKg = Math.ceil(totalWeight - 5);
                 deliveryCharge = 500 + (extraKg * 110);
             }
@@ -206,12 +228,22 @@
         const grid = document.getElementById('productsGrid');
         if (!products.length) { grid.innerHTML = '<div style="text-align:center;">No products found.</div>'; return; }
         grid.innerHTML = products.map(p => {
+            const images = p.images || [];
             const fullDesc = getProductDescription(p);
             const shortDesc = fullDesc ? (fullDesc.length > 80 ? fullDesc.substring(0, 80) + '...' : fullDesc) : 'No description added yet.';
             const displayDesc = fullDesc ? shortDesc : 'No description added yet.';
+            
+            // Generate image gallery HTML
+            let galleryHtml = '';
+            if (images.length > 0) {
+                galleryHtml = `<div class="product-images">` + images.map(img => `<img src="${img}" onclick="event.stopPropagation(); showFullImage('${img}')" loading="lazy">`).join('') + `</div>`;
+            } else {
+                galleryHtml = `<img class="main-image" src="https://via.placeholder.com/300?text=No+Image" onclick="event.stopPropagation(); showFullImage(this.src)">`;
+            }
+            
             return `
                 <div class="product-card" data-name="${escapeHtml(p.name || 'Unnamed')}">
-                    <img class="product-img" src="${p.images?.[0] || 'https://via.placeholder.com/300?text=No+Image'}" alt="${p.name}" loading="lazy">
+                    ${galleryHtml}
                     <div class="product-info">
                         <div class="product-name">${escapeHtml(p.name || 'Unnamed')}</div>
                         <div class="product-desc">
@@ -225,6 +257,7 @@
             `;
         }).join('');
         
+        // Attach event listeners
         document.querySelectorAll('.see-more-btn').forEach(btn => {
             btn.removeEventListener('click', handleSeeMore);
             btn.addEventListener('click', handleSeeMore);
@@ -381,7 +414,7 @@
             card.style.display = name.includes(term) ? 'flex' : 'none';
         });
     });
-    window.onclick = (e) => { if (e.target === document.getElementById('descModal')) closeModal(); };
+    window.onclick = (e) => { if (e.target === document.getElementById('descModal')) closeDescModal(); };
 
     loadData();
     loadCitiesForCustomer();
