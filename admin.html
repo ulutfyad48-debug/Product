@@ -1,319 +1,212 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Mart PK | Admin - Full Cities + Categories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mart PK | Admin Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #eab308;
+            --whatsapp: #25d366;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+        }
+
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#f1f5f9;font-family:'Segoe UI',sans-serif;}
-        .navbar{background:#0f172a;color:white;padding:1rem;display:flex;justify-content:space-between;flex-wrap:wrap;}
-        .container{max-width:1400px;margin:auto;padding:1rem;}
-        .grid{display:grid;grid-template-columns:400px 1fr;gap:1.5rem;}
-        @media (max-width:800px){.grid{grid-template-columns:1fr;}}
-        .card{background:white;border-radius:1rem;padding:1rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.1);}
-        .card h3{margin-bottom:0.8rem;border-left:4px solid #eab308;padding-left:0.5rem;}
-        input,select,textarea{width:100%;padding:8px 12px;border:1px solid #cbd5e1;border-radius:2rem;margin-bottom:8px;font-size:14px;}
-        .btn{background:#0f172a;color:white;border:none;padding:8px 16px;border-radius:2rem;cursor:pointer;}
-        .btn-gold{background:#eab308;color:#0f172a;}
-        .btn-sm{padding:4px 12px;font-size:12px;}
-        .product-card,.category-chip{border:1px solid #e2e8f0;border-radius:1rem;padding:0.5rem;margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center;}
-        .warehouse-item{display:flex;justify-content:space-between;background:#f8fafc;padding:5px 10px;border-radius:2rem;margin-bottom:5px;}
-        .toast{position:fixed;bottom:20px;left:20px;background:#0f172a;color:white;padding:8px 16px;border-radius:2rem;display:none;z-index:1000;}
-        .category-list{max-height:200px;overflow-y:auto;}
+        body{background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text-main); line-height: 1.6;}
+        
+        .navbar{background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;}
+        .container{max-width: 1300px; margin: 2rem auto; padding: 0 1rem;}
+        .grid{display: grid; grid-template-columns: 380px 1fr; gap: 2rem;}
+        @media (max-width: 900px){ .grid{grid-template-columns: 1fr;} }
+
+        .card{background: var(--card-bg); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;}
+        .card h3{margin-bottom: 1.2rem; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;}
+        
+        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; }
+        
+        .btn {
+            padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; 
+            display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: 0.3s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-gold { background: var(--accent); color: var(--primary); }
+        .btn-wa { background: var(--whatsapp); color: white; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+        .list-container { max-height: 400px; overflow-y: auto; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; }
+        
+        .toast{position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 12px 25px; border-radius: 8px; display: none; z-index: 1000;}
     </style>
 </head>
 <body>
+
 <div class="navbar">
-    <div><i class="fas fa-crown"></i> Mart PK Admin</div>
-    <div><span id="productCount">0</span> Products | <span id="cityCount">0</span> Cities</div>
+    <div class="brand"><i class="fas fa-tasks"></i> Mart PK | Management Hub</div>
+    <div id="stats"><i class="fas fa-box"></i> <span id="productCount">0</span> Products</div>
 </div>
+
 <div class="container">
     <div class="grid">
-        <div>
-            <!-- Categories Management -->
+        <div class="sidebar">
             <div class="card">
-                <h3><i class="fas fa-tags"></i> Manage Categories</h3>
-                <div style="display:flex;gap:5px;">
-                    <input type="text" id="newCategoryName" placeholder="New category name" style="flex:1;">
-                    <button id="addCategoryBtn" class="btn btn-sm">Add</button>
-                </div>
-                <div id="categoriesList" class="category-list" style="margin-top:10px;">Loading...</div>
-            </div>
-
-            <div class="card">
-                <h3><i class="fas fa-plus"></i> Add/Edit Product</h3>
+                <h3><i class="fas fa-plus-circle"></i> Add Product</h3>
                 <input type="text" id="prodName" placeholder="Product Name *">
                 <textarea id="prodDesc" rows="2" placeholder="Description"></textarea>
-                <input type="number" id="marketPrice" placeholder="Market Price (PKR) *">
-                <input type="number" id="wholesalePrice" placeholder="Wholesale Price (PKR) *">
-                <input type="number" id="weight" step="0.1" placeholder="Weight (KG) *">
-                <select id="categorySelect"></select>
-                <input type="text" id="pickupCode" placeholder="Pickup Address Code *">
-                <select id="pickupCitySelect"></select>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="number" id="marketPrice" placeholder="Price">
+                    <input type="number" id="weight" step="0.1" placeholder="Weight (KG)">
+                </div>
+                <select id="categorySelect"><option value="">Category</option></select>
+                
                 <div id="imageUrls"></div>
-                <button onclick="addImageField()" class="btn" style="background:#475569;">+ Add Image URL</button>
-                <button id="saveBtn" class="btn btn-gold" style="width:100%;margin-top:10px;">Save Product</button>
+                <button onclick="addImageField()" class="btn btn-sm btn-primary" style="width:100%; margin-bottom:10px;">+ Add Image Link</button>
+                
+                <button id="saveBtn" onclick="saveProduct()" class="btn btn-gold" style="width:100%;">
+                    <i class="fas fa-save"></i> Save Product
+                </button>
             </div>
 
             <div class="card">
-                <h3><i class="fas fa-warehouse"></i> Warehouses</h3>
-                <div id="warehouseList"></div>
-                <div style="display:flex;gap:5px;"><input type="text" id="newWarehouse" placeholder="New code"><button id="addWarehouseBtn" class="btn btn-sm">Add</button></div>
-                <hr>
-                <h3>Settings</h3>
-                <input type="text" id="defaultPickupCode" placeholder="Default Pickup Code">
-                <select id="defaultPickupCitySelect"></select>
-                <button id="saveSettingsBtn" class="btn btn-gold">Save Settings</button>
+                <h3><i class="fas fa-folder"></i> Categories</h3>
+                <div style="display:flex; gap:5px; margin-bottom: 15px;">
+                    <input type="text" id="newCategoryName" placeholder="New category..." style="margin-bottom:0;">
+                    <button onclick="addCategory()" class="btn btn-sm btn-primary">Add</button>
+                </div>
+                <div id="categoriesList" class="list-container"></div>
             </div>
         </div>
-        <div>
-            <div class="card">
-                <h3><i class="fas fa-boxes"></i> Products <button onclick="loadProducts()" class="btn btn-sm" style="float:right;">Refresh</button></h3>
-                <div id="productsList">Loading...</div>
+
+        <div class="main-content">
+            <div class="card" style="border-left: 5px solid var(--accent);">
+                 <h3><i class="fas fa-bell"></i> New Orders (WhatsApp/Email)</h3>
+                 <div id="pendingOrdersList" class="list-container">Loading orders...</div>
             </div>
+
             <div class="card">
-                <h3><i class="fas fa-truck"></i> Recent Orders</h3>
-                <div id="ordersList">Loading...</div>
+                <h3><i class="fas fa-boxes"></i> Inventory Management</h3>
+                <div id="productsList" class="list-container"></div>
             </div>
         </div>
     </div>
 </div>
+
 <div id="toast" class="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
 <script>
     const firebaseConfig = { databaseURL: "https://mart-c4baa-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Complete Pakistan cities (270+)
-    const allCities = [
-        "Karachi","Hyderabad","Sukkur","Larkana","Nawabshah","Mirpur Khas","Khairpur","Dadu","Badin","Thatta","Ghotki","Sanghar","Umerkot","Shikarpur","Jacobabad","Kashmore","Kandhkot","Tando Allahyar","Tando M Khan","Matiari","Jamshoro","Sehwan","Mehar","Ratodero","Gambat","Ranipur","Pano Aqil","Rohri","Kotri","Hala",
-        "Lahore","Rawalpindi","Faisalabad","Multan","Gujranwala","Sialkot","Bahawalpur","Sargodha","Sheikhupura","Rahim Yar Khan","Jhang","Dera Ghazi Khan","Kasur","Okara","Wah Cantt","Gujrat","Mandi Bahauddin","Chiniot","Hafizabad","Jhelum","Chakwal","Attock","Mianwali","Khushab","Bhakkar","Layyah","Muzaffargarh","Khanewal","Vehari","Lodhran","Pakpattan","Sahiwal","Toba Tek Singh","Narowal","Nankana","Murree","Taxila","Kamoke","Phalia","Daska","Pasrur","Zafarwal","Chunian","Renala Khurd","Burewala","Arifwala","Mailsi","Kabirwala","Mian Channu","Jahanian","Pir Mahal","Shorkot","Tandlianwala","Sammundri","Jaranwala","Gojra","Kamalia","Kot Addu","Alipur","Shujabad","Jalalpur","Gujar Khan","Kallar Syedan","Kahuta","Fateh Jang","Hasan Abdal","Hazro","Talagang","Kallur Kot","Taunsa","Kot Momin","Bhalwal","Shahpur","Farooqabad","Muridke","Pattoki","Phool Nagar",
-        "Peshawar","Abbottabad","Mardan","Swat","Mingora","Kohat","Dera Ismail Khan","Bannu","Charsadda","Mansehra","Nowshera","Swabi","Haripur","Tank","Lakki Marwat","Batagram","Buner","Shangla","Kohistan","Hangu","Karak","Chitral","Dir","Malakand","Timergara","Kalam","Madyan","Bahrain","Matta","Kabal","Khwazakhela","Alpuri","Besham","Dasu","Saidu Sharif","Takht Bhai","Risalpur","Havelian","Nathia Gali",
-        "Quetta","Gwadar","Turbat","Khuzdar","Chaman","Sibi","Loralai","Zhob","Nushki","Mastung","Kalat","Lasbela","Hub","Panjgur","Kech","Awaran","Barkhan","Kohlu","Dera Bugti","Jafarabad","Jhal Magsi","Kachhi","Nasirabad","Sohbatpur","Washuk","Kharan","Chagai","Qilla Abdullah","Pishin","Ziarat","Harnai",
-        "Islamabad","Muzaffarabad","Mirpur","Kotli","Bhimber","Rawalakot","Bagh","Haveli","Sudhnoti","Neelum","Gilgit","Skardu","Hunza","Nagar","Ghanche","Shigar","Astore","Diamer","Ghizer","Kharmang"
-    ].sort();
+    let products = [], imageUrls = [''];
 
-    let categories = [], products = [], currentEditKey = null, imageUrls = [''], warehouses = [];
-
-    function showToast(msg){ let t=document.getElementById('toast'); t.innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',3000); }
-
-    function populateCitySelects(){
-        ['pickupCitySelect', 'defaultPickupCitySelect'].forEach(id => {
-            let sel = document.getElementById(id);
-            if(sel){
-                sel.innerHTML = '<option value="">Select City</option>';
-                allCities.forEach(city => sel.innerHTML += `<option value="${city}">${city}</option>`);
-            }
-        });
-        document.getElementById('cityCount').innerText = allCities.length;
+    function showToast(msg){ 
+        let t = document.getElementById('toast'); t.innerText = msg; t.style.display = 'block'; 
+        setTimeout(() => t.style.display = 'none', 3000); 
     }
 
-    // ========== CATEGORY MANAGEMENT ==========
-    async function loadCategoriesAndRender(){
-        const snap = await db.ref('categories').once('value');
-        const data = snap.val();
-        categories = data ? Object.keys(data).map(key=>({key, name: data[key].name})) : [];
-        // Update category select dropdown in product form
-        const catSelect = document.getElementById('categorySelect');
-        catSelect.innerHTML = '<option value="">Select Category</option>';
-        categories.forEach(c=>catSelect.innerHTML+=`<option value="${c.key}">${escapeHtml(c.name)}</option>`);
-        // Render list in category management
-        const container = document.getElementById('categoriesList');
-        if(categories.length===0){ container.innerHTML='<p>No categories yet. Add one above.</p>'; return; }
-        let html = '';
-        categories.forEach(cat=>{
-            html += `<div class="category-chip"><span>${escapeHtml(cat.name)}</span><button class="btn btn-sm" style="background:#dc2626;" onclick="deleteCategory('${cat.key}')">Delete</button></div>`;
-        });
-        container.innerHTML = html;
-    }
+    // --- ORDER MANAGEMENT (MANUAL) ---
+    function loadPendingOrders() {
+        db.ref('pendingOrders').on('value', snap => {
+            const data = snap.val();
+            const container = document.getElementById('pendingOrdersList');
+            if(!data) { container.innerHTML = '<p>No new orders.</p>'; return; }
 
-    window.deleteCategory = async function(key){
-        if(confirm('Delete category? Products in this category will remain but show as uncategorized.')){
-            await db.ref(`categories/${key}`).remove();
-            loadCategoriesAndRender();
-            showToast('Category deleted');
-        }
-    };
+            container.innerHTML = Object.entries(data).reverse().map(([key, o]) => {
+                const itemsText = o.cartItems.map(i => `${i.name} (x${i.qty})`).join(', ');
+                const totalWeight = o.cartItems.reduce((sum, i) => sum + (parseFloat(i.weight)||0)*(parseInt(i.qty)||1), 0);
+                
+                // Text for WhatsApp
+                const msg = window.encodeURIComponent(`*New Order - Mart PK*\n\n*Name:* ${o.customerName}\n*Phone:* ${o.customerPhone}\n*Address:* ${o.address}, ${o.city}\n\n*Items:* ${itemsText}\n*Total Bill:* Rs. ${o.totalAmount}\n*Weight:* ${totalWeight.toFixed(2)} KG`);
 
-    document.getElementById('addCategoryBtn').onclick = async () => {
-        let name = document.getElementById('newCategoryName').value.trim();
-        if(!name){ showToast('Enter category name'); return; }
-        await db.ref('categories').push({ name });
-        document.getElementById('newCategoryName').value = '';
-        loadCategoriesAndRender();
-        showToast('Category added');
-    };
-    // ========================================
-
-    function renderImageFields(){
-        const container = document.getElementById('imageUrls');
-        container.innerHTML = '';
-        imageUrls.forEach((url,idx)=>{
-            const div = document.createElement('div');
-            div.style.display='flex'; div.style.gap='5px'; div.style.marginBottom='5px';
-            div.innerHTML = `<input type="text" value="${escapeHtml(url)}" placeholder="Image URL" class="img-url" data-idx="${idx}" style="flex:1;"><button class="remove-img" data-idx="${idx}" style="background:#ef4444;color:white;border:none;border-radius:2rem;padding:0 10px;">X</button>`;
-            container.appendChild(div);
-        });
-        document.querySelectorAll('.remove-img').forEach(btn=>{
-            btn.onclick = (e)=>{
-                let idx = parseInt(btn.dataset.idx);
-                imageUrls.splice(idx,1);
-                if(imageUrls.length===0) imageUrls=[''];
-                renderImageFields();
-            };
-        });
-        document.querySelectorAll('.img-url').forEach(inp=>{
-            inp.oninput = (e)=>{ let idx = parseInt(inp.dataset.idx); imageUrls[idx]=inp.value; };
+                return `
+                    <div class="item-row" style="background: #fffbeb; margin-bottom: 10px; border-radius: 8px;">
+                        <div style="flex:1;">
+                            <strong>${o.customerName}</strong> (${o.city})<br>
+                            <small>${itemsText}</small>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <a href="https://wa.me/${o.customerPhone}?text=${msg}" target="_blank" class="btn btn-sm btn-wa"><i class="fab fa-whatsapp"></i> WA</a>
+                            <a href="mailto:?subject=Order Details&body=${msg}" class="btn btn-sm btn-primary"><i class="fas fa-envelope"></i> Email</a>
+                            <button onclick="db.ref('pendingOrders/${key}').remove()" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         });
     }
-    function addImageField(){ imageUrls.push(''); renderImageFields(); }
 
-    async function saveProduct(){
-        let name = document.getElementById('prodName').value.trim();
-        let marketPrice = parseFloat(document.getElementById('marketPrice').value);
-        let wholesalePrice = parseFloat(document.getElementById('wholesalePrice').value);
-        let weight = parseFloat(document.getElementById('weight').value);
-        let categoryKey = document.getElementById('categorySelect').value;
-        let pickupCode = document.getElementById('pickupCode').value.trim();
-        let pickupCity = document.getElementById('pickupCitySelect').value;
-        if(!name || isNaN(marketPrice) || isNaN(wholesalePrice) || isNaN(weight) || !pickupCode || !pickupCity){
-            showToast("All fields required"); return;
-        }
-        let images = imageUrls.filter(u=>u.trim()!='');
-        if(images.length===0) images=['https://placehold.co/400x200'];
-        let prodData = { name, desc: document.getElementById('prodDesc').value, marketPrice, wholesalePrice, weight, categoryKey, pickupCode, pickupCity, images, updatedAt: Date.now() };
-        if(currentEditKey) await db.ref(`products/${currentEditKey}`).update(prodData);
-        else await db.ref('products').push(prodData);
-        showToast("Saved"); resetForm(); loadProducts();
+    // --- PRODUCT MANAGEMENT ---
+    async function saveProduct() {
+        const data = {
+            name: document.getElementById('prodName').value,
+            description: document.getElementById('prodDesc').value,
+            marketPrice: Number(document.getElementById('marketPrice').value),
+            weight: parseFloat(document.getElementById('weight').value) || 0,
+            categoryKey: document.getElementById('categorySelect').value,
+            images: imageUrls.filter(u => u.trim()),
+            updatedAt: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        if(!data.name) return showToast("Name is required");
+
+        await db.ref('products').push(data);
+        showToast("Product Uploaded!");
+        resetForm();
+        loadProducts();
     }
 
     async function loadProducts(){
         const snap = await db.ref('products').once('value');
-        const data = snap.val();
-        products = data ? Object.keys(data).map(k=>({key:k, ...data[k]})) : [];
+        const data = snap.val() || {};
+        products = Object.entries(data).map(([k,v]) => ({key:k, ...v}));
         document.getElementById('productCount').innerText = products.length;
-        const container = document.getElementById('productsList');
-        if(products.length===0){ container.innerHTML='<p>No products</p>'; return; }
-        let html = '';
-        products.forEach(p=>{
-            const cat = categories.find(c=>c.key===p.categoryKey)?.name||'Uncategorized';
-            html += `<div class="product-card"><div><b>${escapeHtml(p.name)}</b> | ₹${p.marketPrice} / ₹${p.wholesalePrice} | ${p.weight}KG<br>
-            Pickup: ${p.pickupCode} - ${p.pickupCity}<br>Category: ${cat}</div>
-            <div><button onclick="editProduct('${p.key}')" class="btn btn-sm">Edit</button>
-            <button onclick="deleteProduct('${p.key}')" class="btn btn-sm" style="background:#dc2626;">Delete</button></div></div>`;
-        });
-        container.innerHTML = html;
+        document.getElementById('productsList').innerHTML = products.map(p => `
+            <div class="item-row">
+                <span>${p.name} - Rs.${p.marketPrice}</span>
+                <button onclick="db.ref('products/${p.key}').remove();loadProducts();" class="btn btn-sm btn-danger">Delete</button>
+            </div>
+        `).join('');
     }
 
-    function editProduct(key){
-        let p = products.find(x=>x.key===key);
-        if(!p) return;
-        currentEditKey = key;
-        document.getElementById('prodName').value = p.name;
-        document.getElementById('prodDesc').value = p.desc||'';
-        document.getElementById('marketPrice').value = p.marketPrice;
-        document.getElementById('wholesalePrice').value = p.wholesalePrice;
-        document.getElementById('weight').value = p.weight;
-        document.getElementById('categorySelect').value = p.categoryKey||'';
-        document.getElementById('pickupCode').value = p.pickupCode;
-        document.getElementById('pickupCitySelect').value = p.pickupCity;
-        imageUrls = p.images ? [...p.images] : [''];
-        renderImageFields();
-        window.scrollTo({top:0});
-    }
-
-    async function deleteProduct(key){ if(confirm('Delete?')){ await db.ref(`products/${key}`).remove(); if(currentEditKey===key) resetForm(); loadProducts(); showToast('Deleted'); } }
-    function resetForm(){
-        currentEditKey=null;
-        document.getElementById('prodName').value='';
-        document.getElementById('prodDesc').value='';
-        document.getElementById('marketPrice').value='';
-        document.getElementById('wholesalePrice').value='';
-        document.getElementById('weight').value='';
-        document.getElementById('categorySelect').value='';
-        document.getElementById('pickupCode').value='';
-        document.getElementById('pickupCitySelect').value='';
-        imageUrls=['']; renderImageFields();
-    }
-
-    async function loadWarehouses(){
-        const snap = await db.ref('settings/warehouses').once('value');
-        warehouses = snap.val() || [];
-        const container = document.getElementById('warehouseList');
-        container.innerHTML = '';
-        warehouses.forEach(wh => {
-            const div = document.createElement('div'); div.className='warehouse-item';
-            div.innerHTML = `<span>${escapeHtml(wh)}</span><button data-code="${wh}" class="removeWhBtn" style="background:#ef4444;border:none;border-radius:2rem;color:white;padding:0 10px;">✖</button>`;
-            container.appendChild(div);
-        });
-        document.querySelectorAll('.removeWhBtn').forEach(btn=>{
-            btn.onclick = async ()=>{
-                let code = btn.dataset.code;
-                let newWh = warehouses.filter(w=>w!==code);
-                await db.ref('settings/warehouses').set(newWh);
-                loadWarehouses();
-            };
-        });
-    }
-
-    document.getElementById('addWarehouseBtn').onclick = async ()=>{
-        let newWh = document.getElementById('newWarehouse').value.trim();
-        if(newWh && !warehouses.includes(newWh)){
-            warehouses.push(newWh);
-            await db.ref('settings/warehouses').set(warehouses);
-            loadWarehouses();
-            document.getElementById('newWarehouse').value='';
-            showToast('Warehouse added');
+    // --- CATEGORY MANAGEMENT ---
+    async function addCategory() {
+        const name = document.getElementById('newCategoryName').value;
+        if(name) {
+            await db.ref('categories').push({name});
+            document.getElementById('newCategoryName').value = '';
+            loadCategories();
         }
-    };
-
-    async function loadSettings(){
-        const snap = await db.ref('settings').once('value');
-        let data = snap.val()||{};
-        document.getElementById('defaultPickupCode').value = data.defaultPickupCode||'';
-        document.getElementById('defaultPickupCitySelect').value = data.defaultPickupCity||'';
-        if(data.warehouses) warehouses = data.warehouses;
-        loadWarehouses();
-    }
-    document.getElementById('saveSettingsBtn').onclick = async ()=>{
-        let defCode = document.getElementById('defaultPickupCode').value.trim();
-        let defCity = document.getElementById('defaultPickupCitySelect').value;
-        await db.ref('settings/defaultPickupCode').set(defCode);
-        await db.ref('settings/defaultPickupCity').set(defCity);
-        showToast('Settings saved');
-    };
-
-    async function loadOrders(){
-        const snap = await db.ref('orders').once('value');
-        let orders = snap.val() ? Object.values(snap.val()).slice(-20).reverse() : [];
-        const container = document.getElementById('ordersList');
-        if(!orders.length){ container.innerHTML='<p>No orders</p>'; return; }
-        let html = '';
-        orders.forEach(o=>{
-            html += `<div style="border-bottom:1px solid #ccc;padding:5px;"><b>${o.orderRef}</b> - ${o.customerName} | ${o.city}<br>Tracking: ${o.trackingNumber} | Total: ₹${o.totalAmount}</div>`;
-        });
-        container.innerHTML = html;
     }
 
-    document.getElementById('saveBtn').onclick = saveProduct;
-    window.addImageField = addImageField;
-    window.editProduct = editProduct;
-    window.deleteProduct = deleteProduct;
+    async function loadCategories() {
+        const snap = await db.ref('categories').once('value');
+        const data = snap.val() || {};
+        const cats = Object.entries(data);
+        document.getElementById('categorySelect').innerHTML = '<option value="">Category</option>' + cats.map(([k,v]) => `<option value="${k}">${v.name}</option>`).join('');
+        document.getElementById('categoriesList').innerHTML = cats.map(([k,v]) => `<div class="item-row"><span>${v.name}</span><button onclick="db.ref('categories/${k}').remove();loadCategories();" class="btn btn-sm btn-danger">X</button></div>`).join('');
+    }
 
-    function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function renderImageFields(){
+        document.getElementById('imageUrls').innerHTML = imageUrls.map((u, i) => `<input type="text" value="${u}" onchange="imageUrls[${i}]=this.value" placeholder="Image URL">`).join('');
+    }
+    window.addImageField = () => { imageUrls.push(''); renderImageFields(); };
+    function resetForm() { document.getElementById('prodName').value=''; document.getElementById('weight').value=''; imageUrls=['']; renderImageFields(); }
 
-    (async function init(){
-        populateCitySelects();
-        await loadCategoriesAndRender();
-        await loadProducts();
-        await loadSettings();
-        await loadOrders();
-        renderImageFields();
-    })();
+    // Init
+    loadCategories();
+    loadProducts();
+    loadPendingOrders();
+    renderImageFields();
 </script>
 </body>
 </html>
