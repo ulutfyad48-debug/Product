@@ -13,17 +13,29 @@
         .btn-password{background:#0f172a;color:white;border:none;padding:6px 15px;border-radius:2rem;cursor:pointer;}
         .filters{margin:1rem 0;display:flex;gap:10px;flex-wrap:wrap;}
         .filters input,.filters select{padding:8px;border-radius:2rem;border:1px solid #ccc;}
-        .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
-        .product-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-        .product-img{width:100%;height:180px;object-fit:cover;}
-        .product-info{padding:12px;}
+        .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+        .product-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;flex-direction:column;}
+        .image-gallery{display:flex;overflow-x:auto;gap:8px;padding:12px;background:#f8f9fa;border-bottom:1px solid #eee;}
+        .gallery-item{text-align:center;min-width:80px;}
+        .gallery-item img{width:70px;height:70px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #ddd;}
+        .gallery-item button{background:#0f172a;color:white;border:none;font-size:10px;border-radius:20px;padding:4px 6px;margin-top:4px;cursor:pointer;width:100%;}
+        .product-info{padding:12px;flex:1;}
         .wholesale-price{color:#1a6b42;font-weight:bold;display:none;}
         .market-price{font-weight:bold;}
-        .btn-download{background:#0f172a;color:white;border:none;padding:5px 10px;border-radius:2rem;margin-top:5px;cursor:pointer;}
+        .description{color:#444;font-size:0.9rem;margin:8px 0;line-height:1.4;}
+        .see-more-btn{background:none;border:none;color:#0f172a;font-weight:bold;cursor:pointer;margin-left:4px;}
         .password-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;}
         .modal-box{background:white;padding:2rem;border-radius:1rem;text-align:center;min-width:280px;}
         .modal-box input{padding:8px;margin:10px 0;border:1px solid #ccc;border-radius:2rem;width:100%;}
         .modal-box button{margin:5px;}
+        /* Description modal */
+        .desc-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1100;visibility:hidden;}
+        .desc-modal-content{background:white;padding:1.5rem;border-radius:12px;max-width:500px;width:90%;max-height:80%;overflow-y:auto;}
+        .desc-modal-content h3{margin-bottom:12px;color:#0f172a;}
+        .desc-modal-content p{line-height:1.5;color:#333;white-space:pre-wrap;margin-bottom:15px;}
+        .close-desc{float:right;font-size:1.5rem;cursor:pointer;}
+        .copy-desc-btn{background:#0f172a;color:white;border:none;padding:8px 12px;border-radius:2rem;cursor:pointer;margin-top:10px;width:100%;}
+        .toast-msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f172a;color:white;padding:8px 16px;border-radius:20px;z-index:1200;font-size:14px;}
     </style>
 </head>
 <body>
@@ -33,15 +45,26 @@
         <input type="text" id="searchInput" placeholder="Search products...">
         <select id="categoryFilter"></select>
     </div>
-    <div id="productsContainer" class="products-grid">Loading...</div>
+    <div id="productsContainer" class="products-grid"><div style="text-align:center;padding:50px;">Loading products...</div></div>
 </div>
 
+<!-- Password Modal -->
 <div id="passwordModal" class="password-modal">
     <div class="modal-box">
         <h3>Enter Password for Wholesale Prices</h3>
         <input type="password" id="wholesalePassword" placeholder="Password">
         <div><button id="submitPasswordBtn" class="btn-password">Submit</button> <button id="closeModalBtn" class="btn-password" style="background:#475569;">Cancel</button></div>
         <div id="pwdError" style="color:red;margin-top:5px;"></div>
+    </div>
+</div>
+
+<!-- Description Modal with Copy Button -->
+<div id="descModal" class="desc-modal">
+    <div class="desc-modal-content">
+        <span class="close-desc" onclick="closeDescriptionModal()">&times;</span>
+        <h3 id="modalTitle">Description</h3>
+        <p id="modalDesc"></p>
+        <button class="copy-desc-btn" onclick="copyDescription()"><i class="fas fa-copy"></i> Copy Description</button>
     </div>
 </div>
 
@@ -54,13 +77,24 @@
 
     let allProducts = [], categories = [], showWholesale = false;
     let currentSearch = '', currentCategory = 'all';
+    let currentDescriptionText = '';
+
+    function showToast(msg){
+        let toast = document.createElement('div');
+        toast.className = 'toast-msg';
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(()=>toast.remove(), 2500);
+    }
 
     async function loadData(){
         const [prodSnap, catSnap] = await Promise.all([
             db.ref('products').once('value'),
             db.ref('categories').once('value')
         ]);
-        if(prodSnap.val()) allProducts = Object.values(prodSnap.val());
+        if(prodSnap.val()){
+            allProducts = Object.entries(prodSnap.val()).map(([key,val]) => ({...val, id: key}));
+        }
         if(catSnap.val()){
             categories = Object.entries(catSnap.val()).map(([k,cat])=>({key:k, name:cat.name}));
             const catFilter = document.getElementById('categoryFilter');
@@ -70,6 +104,37 @@
         renderProducts();
     }
 
+    function getDescription(product){
+        return product.description || product.desc || product.productDescription || product.details || '';
+    }
+
+    // Show modal with full description and store text for copy
+    window.showDescriptionModal = function(title, desc){
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalDesc').innerText = desc;
+        currentDescriptionText = desc;
+        document.getElementById('descModal').style.visibility = 'visible';
+    };
+
+    window.copyDescription = function(){
+        if(currentDescriptionText){
+            navigator.clipboard.writeText(currentDescriptionText).then(() => {
+                showToast('✅ Description copied to clipboard!');
+            }).catch(() => {
+                showToast('❌ Failed to copy. Select text manually.');
+            });
+        }
+    };
+
+    window.closeDescriptionModal = function(){
+        document.getElementById('descModal').style.visibility = 'hidden';
+    };
+
+    // Image download: open in new tab
+    window.downloadSingleImage = function(url){
+        window.open(url, '_blank');
+    };
+
     function renderProducts(){
         let filtered = allProducts;
         if(currentCategory !== 'all') filtered = filtered.filter(p=>p.categoryKey === currentCategory);
@@ -77,43 +142,80 @@
         const container = document.getElementById('productsContainer');
         if(filtered.length===0){ container.innerHTML='<p>No products found</p>'; return; }
         let html = '';
-        filtered.forEach(prod=>{
+        filtered.forEach(prod => {
             const catName = categories.find(c=>c.key===prod.categoryKey)?.name||'';
+            const fullDescription = getDescription(prod);
+            
+            // If no description, show placeholder and no See More
+            let descHtml = '';
+            let seeMoreHtml = '';
+            if(fullDescription && fullDescription.trim() !== ''){
+                const shortDesc = fullDescription.length > 100 ? fullDescription.substring(0,100)+'...' : fullDescription;
+                descHtml = escapeHtml(shortDesc);
+                // Always show See More button if description exists
+                const safeTitle = escapeHtml(prod.name).replace(/'/g, "\\'");
+                // Properly escape for onclick with backticks
+                const safeDesc = fullDescription.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
+                seeMoreHtml = `<button class="see-more-btn" onclick="showDescriptionModal('${safeTitle}', \`${safeDesc}\`)">See More</button>`;
+            } else {
+                descHtml = 'No description available.';
+                seeMoreHtml = '';
+            }
+
+            const images = prod.images || [];
+            let galleryHtml = '';
+            if(images.length){
+                galleryHtml = `<div class="image-gallery">`;
+                images.forEach((img, idx)=>{
+                    const safeImg = img.replace(/'/g, "\\'");
+                    galleryHtml += `
+                        <div class="gallery-item">
+                            <img src="${safeImg}" onclick="openFullImage('${safeImg}')" onerror="this.src='https://placehold.co/70x70'">
+                            <button onclick="downloadSingleImage('${safeImg}')"><i class="fas fa-download"></i></button>
+                        </div>
+                    `;
+                });
+                galleryHtml += `</div>`;
+            } else {
+                galleryHtml = `<div class="image-gallery"><div class="gallery-item"><img src="https://placehold.co/400x200?text=No+Image"></div></div>`;
+            }
+
             html += `
                 <div class="product-card">
-                    <img class="product-img" src="${prod.images?.[0]||'https://placehold.co/400x200'}" onerror="this.src='https://placehold.co/400x200'">
+                    ${galleryHtml}
                     <div class="product-info">
                         <h3>${escapeHtml(prod.name)}</h3>
                         <div class="market-price">Market: Rs. ${prod.marketPrice?.toLocaleString()}</div>
                         <div class="wholesale-price" style="display:${showWholesale?'block':'none'}">Wholesale: Rs. ${prod.wholesalePrice?.toLocaleString()}</div>
-                        <div>Weight: ${prod.weight} KG | ${catName}</div>
-                        <button class="btn-download" onclick="downloadImages(${prod.id})"><i class="fas fa-download"></i> Download Images</button>
+                        <div>Weight: ${prod.weight || 0} KG | ${escapeHtml(catName)}</div>
+                        <div class="description">
+                            ${descHtml}
+                            ${seeMoreHtml}
+                        </div>
                     </div>
                 </div>
             `;
         });
         container.innerHTML = html;
-        window.currentProducts = filtered;
     }
 
-    window.downloadImages = function(productId){
-        let product = allProducts.find(p=>p.id===productId);
-        if(!product || !product.images) return alert('No images');
-        product.images.forEach((url,i)=>{
-            fetch(url, {mode:'cors'}).then(res=>res.blob()).then(blob=>{
-                let a=document.createElement('a'); let blobUrl=URL.createObjectURL(blob);
-                a.href=blobUrl; a.download=`${product.name.replace(/[^a-z0-9]/gi,'_')}_${i+1}.jpg`;
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                URL.revokeObjectURL(blobUrl);
-            }).catch(()=>window.open(url,'_blank'));
-        });
-        alert('Download started');
+    window.openFullImage = function(src){
+        const modalDiv = document.createElement('div');
+        modalDiv.style.position='fixed'; modalDiv.style.top=0; modalDiv.style.left=0;
+        modalDiv.style.width='100%'; modalDiv.style.height='100%'; modalDiv.style.background='rgba(0,0,0,0.8)';
+        modalDiv.style.display='flex'; modalDiv.style.alignItems='center'; modalDiv.style.justifyContent='center';
+        modalDiv.style.zIndex=2000; modalDiv.onclick=()=>modalDiv.remove();
+        const img = document.createElement('img');
+        img.src=src; img.style.maxWidth='90%'; img.style.maxHeight='90%'; img.style.borderRadius='8px';
+        modalDiv.appendChild(img);
+        document.body.appendChild(modalDiv);
     };
 
+    // Search & filter
     document.getElementById('searchInput').addEventListener('input', (e)=>{ currentSearch=e.target.value; renderProducts(); });
     document.getElementById('categoryFilter').addEventListener('change', (e)=>{ currentCategory=e.target.value; renderProducts(); });
 
-    // Password modal logic
+    // Password logic
     const modal = document.getElementById('passwordModal');
     document.getElementById('showWholesaleBtn').onclick = ()=>{ modal.style.visibility = 'visible'; };
     document.getElementById('closeModalBtn').onclick = ()=>{ modal.style.visibility = 'hidden'; document.getElementById('wholesalePassword').value=''; document.getElementById('pwdError').innerText=''; };
