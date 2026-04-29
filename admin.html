@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Mart PK | Admin Hub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -15,11 +14,10 @@
             --card-bg: #ffffff;
             --text-main: #334155;
         }
-
         *{margin:0;padding:0;box-sizing:border-box;}
         body{background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text-main); line-height: 1.6;}
         
-        .navbar{background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100;}
+        .navbar{background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;}
         .container{max-width: 1300px; margin: 2rem auto; padding: 0 1rem;}
         .grid{display: grid; grid-template-columns: 380px 1fr; gap: 2rem;}
         @media (max-width: 900px){ .grid{grid-template-columns: 1fr;} }
@@ -27,7 +25,7 @@
         .card{background: var(--card-bg); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;}
         .card h3{margin-bottom: 1.2rem; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;}
         
-        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
         
         .btn {
             padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; 
@@ -40,9 +38,14 @@
         .btn-sm { padding: 6px 12px; font-size: 12px; }
 
         .list-container { max-height: 400px; overflow-y: auto; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 8px; }
         
         .toast{position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 12px 25px; border-radius: 8px; display: none; z-index: 1000;}
+        
+        @media (max-width: 500px) {
+            .navbar { flex-direction: column; text-align: center; }
+            .item-row { flex-direction: column; align-items: flex-start; }
+        }
     </style>
 </head>
 <body>
@@ -60,8 +63,12 @@
                 <input type="text" id="prodName" placeholder="Product Name *">
                 <textarea id="prodDesc" rows="2" placeholder="Description"></textarea>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <input type="number" id="marketPrice" placeholder="Price">
+                    <input type="number" id="marketPrice" placeholder="Price (Retail)">
+                    <input type="number" id="wholesalePrice" placeholder="Wholesale Price">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <input type="number" id="weight" step="0.1" placeholder="Weight (KG)">
+                    <input type="text" id="location" placeholder="Location / Stock">
                 </div>
                 <select id="categorySelect"><option value="">Category</option></select>
                 
@@ -75,8 +82,8 @@
 
             <div class="card">
                 <h3><i class="fas fa-folder"></i> Categories</h3>
-                <div style="display:flex; gap:5px; margin-bottom: 15px;">
-                    <input type="text" id="newCategoryName" placeholder="New category..." style="margin-bottom:0;">
+                <div style="display:flex; gap:5px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <input type="text" id="newCategoryName" placeholder="New category..." style="flex:1; margin-bottom:0;">
                     <button onclick="addCategory()" class="btn btn-sm btn-primary">Add</button>
                 </div>
                 <div id="categoriesList" class="list-container"></div>
@@ -114,30 +121,39 @@
         setTimeout(() => t.style.display = 'none', 3000); 
     }
 
-    // --- ORDER MANAGEMENT (MANUAL) ---
+    // --- ORDER MANAGEMENT ---
     function loadPendingOrders() {
         db.ref('pendingOrders').on('value', snap => {
             const data = snap.val();
             const container = document.getElementById('pendingOrdersList');
-            if(!data) { container.innerHTML = '<p>No new orders.</p>'; return; }
+            if(!data || Object.keys(data).length === 0) { 
+                container.innerHTML = '<p>No orders yet.</p>'; 
+                return; 
+            }
 
             container.innerHTML = Object.entries(data).reverse().map(([key, o]) => {
-                const itemsText = o.cartItems.map(i => `${i.name} (x${i.qty})`).join(', ');
-                const totalWeight = o.cartItems.reduce((sum, i) => sum + (parseFloat(i.weight)||0)*(parseInt(i.qty)||1), 0);
+                const customerName = o.customerName || o.name || 'Unknown';
+                const customerPhone = o.customerPhone || o.phone || '';
+                const city = o.city || '';
+                const address = o.address || '';
+                const cartItems = o.cartItems || o.cart || [];
+                const totalAmount = o.totalAmount || o.total || 0;
                 
-                // Text for WhatsApp
-                const msg = window.encodeURIComponent(`*New Order - Mart PK*\n\n*Name:* ${o.customerName}\n*Phone:* ${o.customerPhone}\n*Address:* ${o.address}, ${o.city}\n\n*Items:* ${itemsText}\n*Total Bill:* Rs. ${o.totalAmount}\n*Weight:* ${totalWeight.toFixed(2)} KG`);
+                const itemsText = cartItems.map(i => `${i.name} (x${i.qty})`).join(', ');
+                const totalWeight = cartItems.reduce((sum, i) => sum + (parseFloat(i.weight)||0)*(parseInt(i.qty)||1), 0);
+                
+                const msg = encodeURIComponent(`*New Order - Mart PK*\n\n*Name:* ${customerName}\n*Phone:* ${customerPhone}\n*Address:* ${address}, ${city}\n\n*Items:* ${itemsText}\n*Total Bill:* Rs. ${totalAmount}\n*Weight:* ${totalWeight.toFixed(2)} KG`);
 
                 return `
                     <div class="item-row" style="background: #fffbeb; margin-bottom: 10px; border-radius: 8px;">
                         <div style="flex:1;">
-                            <strong>${o.customerName}</strong> (${o.city})<br>
-                            <small>${itemsText}</small>
+                            <strong>${escapeHtml(customerName)}</strong> (${escapeHtml(city)})<br>
+                            <small>${escapeHtml(itemsText)}</small>
                         </div>
-                        <div style="display:flex; gap:8px;">
-                            <a href="https://wa.me/${o.customerPhone}?text=${msg}" target="_blank" class="btn btn-sm btn-wa"><i class="fab fa-whatsapp"></i> WA</a>
+                        <div style="display:flex; gap:8px; flex-wrap: wrap;">
+                            <a href="https://wa.me/${customerPhone}?text=${msg}" target="_blank" class="btn btn-sm btn-wa"><i class="fab fa-whatsapp"></i> WA</a>
                             <a href="mailto:?subject=Order Details&body=${msg}" class="btn btn-sm btn-primary"><i class="fas fa-envelope"></i> Email</a>
-                            <button onclick="db.ref('pendingOrders/${key}').remove()" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                            <button onclick="deleteOrder('${key}')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 `;
@@ -145,13 +161,22 @@
         });
     }
 
+    window.deleteOrder = async (key) => {
+        if(confirm('Delete this order?')) {
+            await db.ref('pendingOrders/' + key).remove();
+            showToast('Order deleted');
+        }
+    };
+
     // --- PRODUCT MANAGEMENT ---
     async function saveProduct() {
         const data = {
             name: document.getElementById('prodName').value,
             description: document.getElementById('prodDesc').value,
             marketPrice: Number(document.getElementById('marketPrice').value),
+            wholesalePrice: Number(document.getElementById('wholesalePrice').value) || 0,
             weight: parseFloat(document.getElementById('weight').value) || 0,
+            location: document.getElementById('location').value,
             categoryKey: document.getElementById('categorySelect').value,
             images: imageUrls.filter(u => u.trim()),
             updatedAt: firebase.database.ServerValue.TIMESTAMP
@@ -172,13 +197,20 @@
         document.getElementById('productCount').innerText = products.length;
         document.getElementById('productsList').innerHTML = products.map(p => `
             <div class="item-row">
-                <span>${p.name} - Rs.${p.marketPrice}</span>
-                <button onclick="db.ref('products/${p.key}').remove();loadProducts();" class="btn btn-sm btn-danger">Delete</button>
+                <span>${escapeHtml(p.name)} - Rs.${p.marketPrice} ${p.wholesalePrice ? `(Wholesale: Rs.${p.wholesalePrice})` : ''} ${p.location ? `[${p.location}]` : ''}</span>
+                <button onclick="deleteProduct('${p.key}')" class="btn btn-sm btn-danger">Delete</button>
             </div>
         `).join('');
     }
 
-    // --- CATEGORY MANAGEMENT ---
+    window.deleteProduct = async (key) => {
+        if(confirm('Delete product?')) {
+            await db.ref('products/' + key).remove();
+            loadProducts();
+        }
+    };
+
+    // --- CATEGORIES ---
     async function addCategory() {
         const name = document.getElementById('newCategoryName').value;
         if(name) {
@@ -192,17 +224,26 @@
         const snap = await db.ref('categories').once('value');
         const data = snap.val() || {};
         const cats = Object.entries(data);
-        document.getElementById('categorySelect').innerHTML = '<option value="">Category</option>' + cats.map(([k,v]) => `<option value="${k}">${v.name}</option>`).join('');
-        document.getElementById('categoriesList').innerHTML = cats.map(([k,v]) => `<div class="item-row"><span>${v.name}</span><button onclick="db.ref('categories/${k}').remove();loadCategories();" class="btn btn-sm btn-danger">X</button></div>`).join('');
+        document.getElementById('categorySelect').innerHTML = '<option value="">Category</option>' + cats.map(([k,v]) => `<option value="${k}">${escapeHtml(v.name)}</option>`).join('');
+        document.getElementById('categoriesList').innerHTML = cats.map(([k,v]) => `<div class="item-row"><span>${escapeHtml(v.name)}</span><button onclick="db.ref('categories/${k}').remove();loadCategories();" class="btn btn-sm btn-danger">X</button></div>`).join('');
     }
 
     function renderImageFields(){
         document.getElementById('imageUrls').innerHTML = imageUrls.map((u, i) => `<input type="text" value="${u}" onchange="imageUrls[${i}]=this.value" placeholder="Image URL">`).join('');
     }
     window.addImageField = () => { imageUrls.push(''); renderImageFields(); };
-    function resetForm() { document.getElementById('prodName').value=''; document.getElementById('weight').value=''; imageUrls=['']; renderImageFields(); }
+    function resetForm() { 
+        document.getElementById('prodName').value=''; 
+        document.getElementById('prodDesc').value='';
+        document.getElementById('marketPrice').value='';
+        document.getElementById('wholesalePrice').value='';
+        document.getElementById('weight').value='';
+        document.getElementById('location').value='';
+        imageUrls=['']; 
+        renderImageFields(); 
+    }
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-    // Init
     loadCategories();
     loadProducts();
     loadPendingOrders();
