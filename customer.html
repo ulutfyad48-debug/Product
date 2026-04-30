@@ -32,23 +32,67 @@
         @media (min-width: 640px) and (max-width: 1023px) { .products-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 639px) { .products-grid { grid-template-columns: 1fr; } }
 
-        .product-card { background: var(--bg-card); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; }
+        .product-card { background: var(--bg-card); border-radius: 1rem; overflow: hidden; border: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; }
         .product-card:hover { transform: translateY(-5px); border-color: var(--primary); }
 
-        /* Image gallery */
-        .product-images { display: flex; overflow-x: auto; gap: 8px; padding: 10px; background: #0f172a; border-bottom: 1px solid var(--border); scroll-snap-type: x mandatory; }
-        .product-images img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; flex-shrink: 0; scroll-snap-align: start; transition: 0.2s; border: 1px solid var(--border); }
-        .product-images img:hover { border-color: var(--primary); transform: scale(1.02); }
-        .main-image { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border); cursor: pointer; }
+        /* Premium Loader Animation */
+        .premium-loader { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 0; width: 100%; grid-column: 1 / -1; }
+        .spinner { width: 60px; height: 60px; border: 4px solid rgba(16, 185, 129, 0.1); border-left-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.5rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader-text { color: var(--primary); font-size: 1.1rem; font-weight: 600; letter-spacing: 1.5px; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* Image Carousel Styles */
+        .carousel-container { position: relative; width: 100%; height: 220px; overflow: hidden; border-bottom: 1px solid var(--border); }
+        .carousel-images { display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); }
+        .carousel-images img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
+        .carousel-btn { 
+    position: absolute; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    background: rgba(15, 23, 42, 0.8); 
+    color: white; 
+    border: 1px solid var(--border); 
+    width: 36px; 
+    height: 36px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    opacity: 0; /* Default hidden */
+    transition: all 0.3s ease; 
+    font-size: 14px; 
+    z-index: 10; 
+}
+        .product-card:hover .carousel-btn, 
+        .pd-left:hover .carousel-btn { 
+         opacity: 1; 
+        }
+
+        .pd-left .carousel-btn {
+        opacity: 0.7;
+        }
+
+        .pd-left .carousel-btn:hover {
+         opacity: 1;
+         background: var(--primary);
+        }
+        .carousel-btn:hover { background: var(--primary); border-color: var(--primary); transform: translateY(-50%) scale(1.1); }
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+        .carousel-btn.hidden { display: none !important; }
+        
+        .main-image { width: 100%; height: 220px; object-fit: cover; border-bottom: 1px solid var(--border); }
 
         .product-info { padding: 1.2rem; flex: 1; display: flex; flex-direction: column; }
         .product-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 6px; }
         .product-desc { font-size: 0.85rem; color: var(--text-muted); margin: 8px 0; line-height: 1.4; }
-        .see-more-btn { background: none; border: none; color: var(--primary); font-size: 0.75rem; cursor: pointer; font-weight: 600; padding: 0; display: inline-block; }
         .market-price { font-weight: 800; color: var(--primary); font-size: 1.3rem; margin: 12px 0 10px; }
         .add-btn { background: var(--primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .add-btn:hover { background: #0d9668; }
 
+        /* Cart Drawer */
         .cart-overlay { position: fixed; top: 0; right: -100%; width: 100%; max-width: 450px; height: 100%; background: var(--bg-card); z-index: 1001; transition: 0.35s ease-out; box-shadow: -5px 0 20px rgba(0,0,0,0.6); overflow-y: auto; padding: 2rem; }
         .cart-overlay.active { right: 0; }
         .close-cart { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; float: right; }
@@ -58,18 +102,84 @@
         .order-btn { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 1rem; font-weight: bold; border: none; cursor: pointer; margin-top: 15px; font-size: 1rem; }
         .clear-cart-btn { background: #dc2626; color: white; border: none; padding: 8px 12px; border-radius: 0.5rem; cursor: pointer; margin-bottom: 10px; width: 100%; font-weight: bold; }
 
-        /* Modal for image full view */
-        .image-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; }
-        .image-modal img { max-width: 90%; max-height: 90%; border-radius: 8px; }
-        .close-image-modal { position: absolute; top: 20px; right: 30px; font-size: 2rem; color: white; cursor: pointer; }
+        /* Product Detail Modal */
+        .product-detail-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 1rem; }
+        .pd-content { background: var(--bg-body); width: 100%; max-width: 900px; max-height: 90vh; border-radius: 1.5rem; display: flex; overflow: hidden; position: relative; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .pd-close { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: var(--text-muted); cursor: pointer; z-index: 10; background: rgba(15,23,42,0.6); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+        .pd-close:hover { color: white; background: var(--primary); border-color: var(--primary); }
+        
+        .pd-left { width: 50%; background: #000; position: relative; display: flex; align-items: center; }
+        .pd-left .carousel-container { height: 100%; min-height: 300px; border: none; }
+        .pd-left .carousel-images img { object-fit: contain; } /* Show full image without cropping */
+        .pd-left .carousel-btn { width: 40px; height: 40px; font-size: 16px; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: var(--bg-card); max-width: 500px; width: 90%; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid var(--primary); position: relative; }
-        .modal-content h3 { color: var(--primary); margin-bottom: 1rem; }
-        .modal-content p { color: var(--text-muted); line-height: 1.6; white-space: pre-wrap; }
-        .close-modal { position: absolute; top: 12px; right: 18px; font-size: 1.8rem; cursor: pointer; color: var(--text-muted); }
+        .pd-right { width: 50%; padding: 2.5rem; overflow-y: auto; display: flex; flex-direction: column; background: var(--bg-card); }
+        .pd-title { font-size: 1.8rem; font-weight: bold; margin-bottom: 10px; color: white; }
+        .pd-price { font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; }
+        .pd-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.6; white-space: pre-wrap; margin-bottom: 30px; flex: 1; }
+        
+        /* Detail Cart Controls */
+        .pd-actions { border-top: 1px solid var(--border); padding-top: 20px; margin-top: auto; }
+        .pd-qty-wrapper { display: flex; align-items: center; justify-content: space-between; background: var(--bg-body); padding: 10px 15px; border-radius: 1rem; border: 1px solid var(--border); }
+        .pd-qty-controls { display: flex; align-items: center; gap: 15px; }
+        .pd-qty-controls button { background: #334155; color: white; border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; font-weight: bold; transition: 0.2s; }
+        .pd-qty-controls button:hover { background: var(--primary); }
+        .pd-qty-controls span { font-size: 1.2rem; font-weight: bold; width: 20px; text-align: center; }
+        .pd-delete-btn { background: #dc2626 !important; }
+        .pd-delete-btn:hover { background: #b91c1c !important; }
 
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 12px 24px; border-radius: 2rem; z-index: 2000; display: none; }
+        /* Show More / Less Container */
+.pagination-wrapper {
+    position: relative;
+    padding-bottom: 50px;
+    margin-top: -100px; /* Grid ke uper overlay karne ke liye */
+    text-align: center;
+    z-index: 50;
+}
+
+/* Shadow Effect (Gradient) */
+.shadow-overlay {
+    height: 150px;
+    background: linear-gradient(to bottom, transparent, var(--bg-body) 80%);
+    pointer-events: none; /* Taake niche ke cards par click ho sake */
+}
+
+.show-btns-container {
+    background: var(--bg-body);
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.pagination-btn {
+    background: var(--bg-card);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 10px 25px;
+    border-radius: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.pagination-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.hidden { display: none !important; }
+
+
+        @media (max-width: 768px) {
+            .pd-content { flex-direction: column; }
+            .pd-left, .pd-right { width: 100%; }
+            .pd-left { height: 350px; flex-shrink: 0; }
+            .pd-right { padding: 1.5rem; }
+            .pd-close { top: 10px; right: 10px; }
+        }
+
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 12px 24px; border-radius: 2rem; z-index: 3000; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -83,10 +193,27 @@
 
 <div class="container">
     <div class="search-bar"><input type="text" id="searchInput" placeholder="🔍 Search products..."></div>
-    <div id="productsGrid" class="products-grid"><div style="text-align:center; padding:3rem;">Loading products...</div></div>
+    <div id="productsGrid" class="products-grid">
+        <div class="premium-loader">
+            <div class="spinner"></div>
+            <div class="loader-text">FETCHING PREMIUM PRODUCTS...</div>
+        </div>
+    </div>
+
+    <div id="productsGrid" class="products-grid"></div>
+
+<!-- Pagination Section -->
+<div id="paginationArea" class="pagination-wrapper hidden">
+    <div class="shadow-overlay"></div>
+    <div class="show-btns-container">
+        <button id="showMoreBtn" class="pagination-btn" onclick="showMore()">Show More</button>
+        <button id="showLessBtn" class="pagination-btn hidden" onclick="showLess()">Show Less</button>
+    </div>
 </div>
 
-<!-- Cart Drawer (same as before) -->
+</div>
+
+<!-- Cart Drawer -->
 <div id="cartDrawer" class="cart-overlay">
     <button class="close-cart" onclick="toggleCart()">&times;</button>
     <h3 style="margin-bottom: 20px;"><i class="fas fa-shopping-basket"></i> Your Basket</h3>
@@ -114,19 +241,27 @@
     <button id="placeOrderBtn" class="order-btn">✅ Confirm Order (Cash on Delivery)</button>
 </div>
 
-<!-- Description Modal -->
-<div id="descModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeDescModal()">&times;</span>
-        <h3 id="modalTitle">Description</h3>
-        <p id="modalDesc"></p>
-    </div>
-</div>
+<!-- Product Detail Modal (Quick View) -->
+<div id="productDetailModal" class="product-detail-modal">
+    <div class="pd-content">
+        <div class="pd-close" onclick="closeProductDetail()">&times;</div>
+        
+        <!-- Left Side: Image / Carousel -->
+        <div class="pd-left" id="pdLeft">
+            <!-- Rendered via JS -->
+        </div>
 
-<!-- Fullscreen Image Modal -->
-<div id="imageModal" class="image-modal" onclick="closeImageModal()">
-    <span class="close-image-modal">&times;</span>
-    <img id="fullImage" src="">
+        <!-- Right Side: Details & Cart Controls -->
+        <div class="pd-right">
+            <div class="pd-title" id="pdTitle">Product Name</div>
+            <div class="pd-price" id="pdPrice">₨ 0</div>
+            <div class="pd-desc" id="pdDesc">Description goes here...</div>
+            
+            <div class="pd-actions" id="pdActions">
+                <!-- Add to cart or Qty controls rendered via JS -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="toastMsg" class="toast"></div>
@@ -144,6 +279,8 @@
 
     let products = [];
     let cart = [];
+    let activeDetailProductId = null; // Track which product is currently open in modal
+    let deliveryCharge = 0;
 
     if(!localStorage.getItem('cartClearedFlag')) {
         localStorage.removeItem('martCart');
@@ -153,35 +290,39 @@
         if(saved) cart = JSON.parse(saved);
     }
 
-    let deliveryCharge = 0;
-
     function toggleCart() { document.getElementById('cartDrawer').classList.toggle('active'); }
     function showToast(msg) { let t = document.getElementById('toastMsg'); t.innerText = msg; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 3000); }
-    function closeDescModal() { document.getElementById('descModal').style.display = 'none'; }
-    function closeImageModal() { document.getElementById('imageModal').style.display = 'none'; }
 
-    window.showDescription = function(title, desc) {
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDesc').innerText = desc || "No description added yet.";
-        document.getElementById('descModal').style.display = 'flex';
+    // Carousel Image Slider Logic (Works for both Grid and Detail Modal)
+    window.moveCarousel = function(btn, dir, totalImages) {
+        let container = btn.closest('.carousel-container');
+        let imagesDiv = container.querySelector('.carousel-images');
+        let currentIndex = parseInt(container.getAttribute('data-current'));
+        let newIndex = currentIndex + dir;
+
+        if (newIndex >= 0 && newIndex < totalImages) {
+            container.setAttribute('data-current', newIndex);
+            imagesDiv.style.transform = `translateX(-${newIndex * 100}%)`;
+
+            let prevBtn = container.querySelector('.carousel-btn.prev');
+            let nextBtn = container.querySelector('.carousel-btn.next');
+
+            if (newIndex === 0) prevBtn.classList.add('hidden');
+            else prevBtn.classList.remove('hidden');
+
+            if (newIndex === totalImages - 1) nextBtn.classList.add('hidden');
+            else nextBtn.classList.remove('hidden');
+        }
     };
 
-    window.showFullImage = function(src) {
-        document.getElementById('fullImage').src = src;
-        document.getElementById('imageModal').style.display = 'flex';
-    };
+    
 
     async function loadCitiesForCustomer() {
         const datalist = document.getElementById('citiesList');
         try {
-            const response = await fetch("https://api.postex.pk/services/integration/api/order/v1/get-operational-city", {
-                headers: { "token": POSTEX_TOKEN, "Content-Type": "application/json" }
-            });
+            const response = await fetch("https://api.postex.pk/services/integration/api/order/v1/get-operational-city", { headers: { "token": POSTEX_TOKEN, "Content-Type": "application/json" } });
             const result = await response.json();
-            let rawCities = [];
-            if (Array.isArray(result)) rawCities = result;
-            else if (result.dist && Array.isArray(result.dist)) rawCities = result.dist;
-            else if (result.data && Array.isArray(result.data)) rawCities = result.data;
+            let rawCities = Array.isArray(result) ? result : (result.dist || result.data || []);
             window.allOperationalCities = rawCities.map(item => (typeof item === 'object' ? (item.cityName || item.name || item.operationalCityName) : item)).filter(Boolean).sort();
             if (datalist) datalist.innerHTML = window.allOperationalCities.map(city => `<option value="${city}">`).join('');
         } catch (e) { console.error("City API error:", e); }
@@ -196,10 +337,7 @@
             else if (totalWeight <= 1) deliveryCharge = 240;
             else if (totalWeight <= 3) deliveryCharge = 330;
             else if (totalWeight <= 5) deliveryCharge = 500;
-            else {
-                let extraKg = Math.ceil(totalWeight - 5);
-                deliveryCharge = 500 + (extraKg * 110);
-            }
+            else deliveryCharge = 500 + (Math.ceil(totalWeight - 5) * 110);
         }
         updateTotal();
     }
@@ -213,80 +351,137 @@
     }
 
     async function loadData() {
-        const prodSnap = await db.ref('products').once('value');
-        if (prodSnap.val()) products = Object.entries(prodSnap.val()).map(([key, val]) => ({ ...val, firebaseId: key }));
-        renderProducts();
-        renderCart();
-        updateTotal();
+        try {
+            const prodSnap = await db.ref('products').once('value');
+            if (prodSnap.val()) products = Object.entries(prodSnap.val()).map(([key, val]) => ({ ...val, firebaseId: key }));
+            renderProducts();
+            renderCart();
+            updateTotal();
+        } catch(e) {
+            document.getElementById('productsGrid').innerHTML = '<div style="text-align:center; color:red; grid-column:1/-1;">Error loading products.</div>';
+        }
     }
 
-    function getProductDescription(product) {
-        return product.description || product.desc || product.productDescription || product.details || '';
-    }
+    function getProductDescription(product) { return product.description || product.desc || product.productDescription || product.details || 'No description added yet.'; }
 
     function renderProducts() {
         const grid = document.getElementById('productsGrid');
-        if (!products.length) { grid.innerHTML = '<div style="text-align:center;">No products found.</div>'; return; }
+        if (!products.length) { grid.innerHTML = '<div style="text-align:center; grid-column:1/-1;">No products found.</div>'; return; }
+        
         grid.innerHTML = products.map(p => {
             const images = p.images || [];
             const fullDesc = getProductDescription(p);
-            const shortDesc = fullDesc ? (fullDesc.length > 80 ? fullDesc.substring(0, 80) + '...' : fullDesc) : 'No description added yet.';
-            const displayDesc = fullDesc ? shortDesc : 'No description added yet.';
+            const shortDesc = fullDesc.length > 70 ? fullDesc.substring(0, 70) + '...' : fullDesc;
             
-            // Generate image gallery HTML
             let galleryHtml = '';
             if (images.length > 0) {
-                galleryHtml = `<div class="product-images">` + images.map(img => `<img src="${img}" onclick="event.stopPropagation(); showFullImage('${img}')" loading="lazy">`).join('') + `</div>`;
+                let imgsHtml = images.map((img, idx) => `<img src="${img}" loading="${idx === 0 ? 'eager' : 'lazy'}">`).join('');
+                let btnsHtml = images.length > 1 ? `
+                    <button class="carousel-btn prev hidden" onclick="event.stopPropagation(); moveCarousel(this, -1, ${images.length})"><i class="fas fa-chevron-left"></i></button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation(); moveCarousel(this, 1, ${images.length})"><i class="fas fa-chevron-right"></i></button>
+                ` : '';
+                galleryHtml = `<div class="carousel-container" data-current="0"><div class="carousel-images">${imgsHtml}</div>${btnsHtml}</div>`;
             } else {
-                galleryHtml = `<img class="main-image" src="https://via.placeholder.com/300?text=No+Image" onclick="event.stopPropagation(); showFullImage(this.src)">`;
+                galleryHtml = `<img class="main-image" src="https://via.placeholder.com/300?text=No+Image">`;
             }
             
             return `
-                <div class="product-card" data-name="${escapeHtml(p.name || 'Unnamed')}">
+                <div class="product-card" data-name="${escapeHtml(p.name || 'Unnamed')}" onclick="openProductDetail('${p.firebaseId}')">
                     ${galleryHtml}
                     <div class="product-info">
                         <div class="product-name">${escapeHtml(p.name || 'Unnamed')}</div>
-                        <div class="product-desc">
-                            ${escapeHtml(displayDesc)}
-                            ${fullDesc ? `<button class="see-more-btn" data-title="${escapeHtml(p.name)}" data-desc="${escapeHtml(fullDesc)}">See More</button>` : ''}
-                        </div>
+                        <div class="product-desc">${escapeHtml(shortDesc)}</div>
                         <div class="market-price">₨ ${Number(p.marketPrice).toLocaleString()}</div>
-                        <button class="add-btn" data-id="${p.firebaseId}">Add to Bag</button>
+                        <button class="add-btn" data-id="${p.firebaseId}" onclick="event.stopPropagation(); addToCart('${p.firebaseId}')">Add to Bag</button>
                     </div>
                 </div>
             `;
         }).join('');
-        
-        // Attach event listeners
-        document.querySelectorAll('.see-more-btn').forEach(btn => {
-            btn.removeEventListener('click', handleSeeMore);
-            btn.addEventListener('click', handleSeeMore);
-        });
-        document.querySelectorAll('.add-btn').forEach(btn => {
-            btn.removeEventListener('click', handleAddToCart);
-            btn.addEventListener('click', handleAddToCart);
-        });
     }
 
-    function handleSeeMore(e) {
-        const title = e.currentTarget.getAttribute('data-title');
-        const desc = e.currentTarget.getAttribute('data-desc');
-        showDescription(title, desc);
+    /* --- PRODUCT DETAIL MODAL LOGIC --- */
+    function openProductDetail(pid) {
+        const p = products.find(x => x.firebaseId === pid);
+        if (!p) return;
+        activeDetailProductId = pid;
+
+        // Set Texts
+        document.getElementById('pdTitle').innerText = p.name || 'Unnamed';
+        document.getElementById('pdPrice').innerText = `₨ ${Number(p.marketPrice).toLocaleString()}`;
+        document.getElementById('pdDesc').innerText = getProductDescription(p);
+
+        // Generate Images/Carousel for left side
+        const images = p.images || [];
+        let galleryHtml = '';
+        if (images.length > 0) {
+            let imgsHtml = images.map(img => `<img src="${img}">`).join('');
+            let btnsHtml = images.length > 1 ? `
+                <button class="carousel-btn prev hidden" onclick="moveCarousel(this, -1, ${images.length})"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-btn next" onclick="moveCarousel(this, 1, ${images.length})"><i class="fas fa-chevron-right"></i></button>
+            ` : '';
+            galleryHtml = `<div class="carousel-container" data-current="0"><div class="carousel-images">${imgsHtml}</div>${btnsHtml}</div>`;
+        } else {
+            galleryHtml = `<img src="https://via.placeholder.com/600?text=No+Image" style="width:100%; height:100%; object-fit:contain;">`;
+        }
+        document.getElementById('pdLeft').innerHTML = galleryHtml;
+
+        renderDetailActions();
+        document.getElementById('productDetailModal').style.display = 'flex';
     }
 
-    function handleAddToCart(e) {
-        const pid = e.currentTarget.getAttribute('data-id');
-        addToCart(pid);
+    function closeProductDetail() {
+        document.getElementById('productDetailModal').style.display = 'none';
+        activeDetailProductId = null;
     }
 
+    function renderDetailActions() {
+        if (!activeDetailProductId) return;
+        const container = document.getElementById('pdActions');
+        const itemInCart = cart.find(i => i.id === activeDetailProductId);
+
+        if (!itemInCart) {
+            // Show Add to Bag button
+            container.innerHTML = `<button class="add-btn" onclick="addToCart('${activeDetailProductId}')" style="font-size:1.1rem; padding:15px;">Add to Bag</button>`;
+        } else {
+            // Show Quantity & Delete Controls
+            container.innerHTML = `
+                <div class="pd-qty-wrapper">
+                    <span style="font-weight:bold; color:var(--text-muted)">Quantity:</span>
+                    <div class="pd-qty-controls">
+                        <button onclick="updateQtyDetail(-1)">-</button>
+                        <span>${itemInCart.qty}</span>
+                        <button onclick="updateQtyDetail(1)">+</button>
+                        <button class="pd-delete-btn" onclick="removeItemDetail()"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function updateQtyDetail(delta) {
+        const idx = cart.findIndex(i => i.id === activeDetailProductId);
+        if (idx > -1) {
+            cart[idx].qty += delta;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            saveCart();
+            renderDetailActions(); // Refresh controls inside modal
+        }
+    }
+
+    function removeItemDetail() {
+        const idx = cart.findIndex(i => i.id === activeDetailProductId);
+        if (idx > -1) {
+            cart.splice(idx, 1);
+            saveCart();
+            renderDetailActions(); // Refresh controls inside modal
+            showToast("Item removed");
+        }
+    }
+
+    /* --- CART LOGIC --- */
     function escapeHtml(str) {
         if(!str) return '';
-        return str.replace(/[&<>]/g, function(m){
-            if(m==='&') return '&amp;';
-            if(m==='<') return '&lt;';
-            if(m==='>') return '&gt;';
-            return m;
-        }).replace(/[\n\r]/g, ' ');
+        return str.replace(/[&<>]/g, m => ({'&': '&amp;', '<': '&lt;', '>': '&gt;'}[m])).replace(/[\n\r]/g, ' ');
     }
 
     function addToCart(pid) {
@@ -297,6 +492,9 @@
         else cart.push({ id: pid, name: p.name, price: Number(p.marketPrice), weight: Number(p.weight) || 0, qty: 1 });
         saveCart();
         showToast("✓ Added to bag!");
+        
+        // If modal is open for this product, refresh its buttons
+        if(activeDetailProductId === pid) { renderDetailActions(); }
     }
 
     function renderCart() {
@@ -306,34 +504,26 @@
             <div class="cart-item">
                 <div style="flex:1"><strong>${escapeHtml(item.name)}</strong><br><small>₨ ${item.price}</small></div>
                 <div>
-                    <button class="qty-btn" data-index="${i}" data-delta="-1">-</button>
+                    <button class="qty-btn" onclick="updateCartDrawerQty(${i}, -1)">-</button>
                     <span style="margin:0 12px">${item.qty}</span>
-                    <button class="qty-btn" data-index="${i}" data-delta="1">+</button>
+                    <button class="qty-btn" onclick="updateCartDrawerQty(${i}, 1)">+</button>
                 </div>
             </div>
         `).join('');
-        document.querySelectorAll('.qty-btn').forEach(btn => {
-            btn.removeEventListener('click', handleQty);
-            btn.addEventListener('click', handleQty);
-        });
     }
 
-    function handleQty(e) {
-        const idx = parseInt(e.currentTarget.getAttribute('data-index'));
-        const delta = parseInt(e.currentTarget.getAttribute('data-delta'));
-        updateQty(idx, delta);
-    }
-
-    function updateQty(idx, delta) {
+    function updateCartDrawerQty(idx, delta) {
         cart[idx].qty += delta;
         if (cart[idx].qty <= 0) cart.splice(idx, 1);
         saveCart();
+        if(activeDetailProductId) renderDetailActions(); // Keep modal in sync if open
     }
 
     function clearCart() {
         if(confirm("Remove all items from cart?")) {
             cart = [];
             saveCart();
+            if(activeDetailProductId) renderDetailActions();
             showToast("Cart cleared");
         }
     }
@@ -344,6 +534,7 @@
         calculateDeliveryCharge();
     }
 
+    /* --- CHECKOUT --- */
     async function placeOrder() {
         const name = document.getElementById('fullName').value.trim();
         const phone = document.getElementById('phone').value.trim();
@@ -351,70 +542,196 @@
         const city = document.getElementById('deliveryCityInput').value.trim();
         const addr = document.getElementById('address').value.trim();
 
-        if (!name || !phone || !street || !city || cart.length === 0) {
-            alert("❌ Please fill all fields and add items.");
-            return;
-        }
+        if (!name || !phone || !street || !city || cart.length === 0) { alert("❌ Please fill all fields and add items."); return; }
         if (!phone.match(/^[0-9]{10,13}$/)) { alert("Enter valid phone number (e.g., 03123456789)"); return; }
 
         const subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
         const total = subtotal + deliveryCharge;
         const itemsList = cart.map(i => `${i.name} (x${i.qty})`).join(', ');
-        const orderDate = new Date().toLocaleString();
 
         const orderData = {
-            customerName: name,
-            customerPhone: phone,
-            city: city,
-            address: `${street}, ${addr}`,
-            cartItems: cart.map(item => ({ name: item.name, price: item.price, qty: item.qty, weight: item.weight })),
-            totalAmount: total,
-            status: 'Pending',
-            timestamp: firebase.database.ServerValue.TIMESTAMP
+            customerName: name, customerPhone: phone, city: city, address: `${street}, ${addr}`,
+            cartItems: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty, weight: i.weight })),
+            totalAmount: total, status: 'Pending', timestamp: firebase.database.ServerValue.TIMESTAMP
         };
 
-        const waMsg = `*🛍️ NEW ORDER - MART PK*%0A----------------------%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*City:* ${city}%0A*Address:* ${street}, ${addr}%0A*Items:* ${itemsList}%0A*Total:* Rs. ${total}%0A*Date:* ${orderDate}`;
+        const waMsg = `*🛍️ NEW ORDER - MART PK*%0A----------------------%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*City:* ${city}%0A*Address:* ${street}, ${addr}%0A*Items:* ${itemsList}%0A*Total:* Rs. ${total}`;
         
-        const emailData = {
-            name: name,
-            phone: phone,
-            city: city,
-            address: `${street}, ${addr}`,
-            items: itemsList,
-            total: `Rs. ${total}`,
-            _subject: `🛒 New Mart PK Order from ${name}`,
-            _template: "table"
-        };
-
         try {
             await db.ref('pendingOrders').push(orderData);
             window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${waMsg}`, '_blank');
-            await fetch('https://formsubmit.co/ajax/' + ADMIN_EMAIL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify(emailData)
-            });
-            showToast("✅ Order placed! Check WhatsApp & Email.");
-            cart = [];
-            saveCart();
+            showToast("✅ Order placed!");
+            cart = []; saveCart();
             setTimeout(() => location.reload(), 1500);
-        } catch (err) {
-            console.error(err);
-            alert("Order failed. Please try again.");
-        }
+        } catch (err) { alert("Order failed. Please try again."); }
     }
 
+    // Event Listeners
     document.getElementById('placeOrderBtn').onclick = placeOrder;
     document.getElementById('deliveryCityInput').onchange = calculateDeliveryCharge;
     document.getElementById('clearCartBtn').onclick = clearCart;
     document.getElementById('searchInput').addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
         document.querySelectorAll('.product-card').forEach(card => {
-            const name = card.getAttribute('data-name') || '';
-            card.style.display = name.includes(term) ? 'flex' : 'none';
+            card.style.display = (card.getAttribute('data-name') || '').toLowerCase().includes(term) ? 'flex' : 'none';
         });
     });
-    window.onclick = (e) => { if (e.target === document.getElementById('descModal')) closeDescModal(); };
+    
+    // Close detail modal when clicking outside the content box
+    document.getElementById('productDetailModal').addEventListener('click', function(e) {
+        if(e.target === this) closeProductDetail();
+    });
+
+    let visibleCount = 0;
+let currentLimit = 0;
+
+// Screen size ke hisaab se limit set karna
+function getPageLimit() {
+    const width = window.innerWidth;
+    if (width >= 1024) return 32; // Large
+    if (width >= 640) return 20;  // Medium
+    return 12;                   // Small
+}
+
+function renderProducts() {
+    const grid = document.getElementById('productsGrid');
+    const paginationArea = document.getElementById('paginationArea');
+    
+    if (!products.length) {
+        grid.innerHTML = '<div style="text-align:center; grid-column:1/-1;">No products found.</div>';
+        paginationArea.classList.add('hidden');
+        return;
+    }
+
+    // Pehli baar load hone par limit set karna
+    if (visibleCount === 0) {
+        currentLimit = getPageLimit();
+        visibleCount = currentLimit;
+    }
+
+    const itemsToShow = products.slice(0, visibleCount);
+    
+    // Purana rendering logic (Carousel ke sath)
+    grid.innerHTML = itemsToShow.map(p => {
+        const images = p.images || [];
+        const fullDesc = getProductDescription(p);
+        const shortDesc = fullDesc.length > 70 ? fullDesc.substring(0, 70) + '...' : fullDesc;
+        
+        let galleryHtml = images.length > 0 ? 
+            `<div class="carousel-container" data-current="0">
+                <div class="carousel-images">${images.map(img => `<img src="${img}" loading="lazy">`).join('')}</div>
+                ${images.length > 1 ? `<button class="carousel-btn prev hidden" onclick="event.stopPropagation(); moveCarousel(this, -1, ${images.length})"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-btn next" onclick="event.stopPropagation(); moveCarousel(this, 1, ${images.length})"><i class="fas fa-chevron-right"></i></button>` : ''}
+            </div>` : `<img class="main-image" src="https://via.placeholder.com/300">`;
+
+        return `
+            <div class="product-card" onclick="openProductDetail('${p.firebaseId}')">
+                ${galleryHtml}
+                <div class="product-info">
+                    <div class="product-name">${escapeHtml(p.name)}</div>
+                    <div class="product-desc">${escapeHtml(shortDesc)}</div>
+                    <div class="market-price">₨ ${Number(p.marketPrice).toLocaleString()}</div>
+                    <button class="add-btn" onclick="event.stopPropagation(); addToCart('${p.firebaseId}')">Add to Bag</button>
+                </div>
+            </div>`;
+    }).join('');
+
+    // Pagination Buttons Control
+    paginationArea.classList.remove('hidden');
+    
+    // Show More button kab dikhana hai?
+    if (visibleCount >= products.length) {
+        document.getElementById('showMoreBtn').classList.add('hidden');
+    } else {
+        document.getElementById('showMoreBtn').classList.remove('hidden');
+    }
+
+    // Show Less button kab dikhana hai?
+    if (visibleCount > currentLimit) {
+        document.getElementById('showLessBtn').classList.remove('hidden');
+    } else {
+        document.getElementById('showLessBtn').classList.add('hidden');
+    }
+}
+
+function showMore() {
+    visibleCount += currentLimit;
+    renderProducts();
+    // Thoda sa scroll niche karne ke liye
+    window.scrollBy({ top: 300, behavior: 'smooth' });
+}
+
+function showLess() {
+    visibleCount = currentLimit;
+    renderProducts();
+    // Wapis products ke paas le jane ke liye
+    document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Search Functionality
+function handleSearch(query) {
+    const term = query.toLowerCase().trim();
+    const grid = document.getElementById('productsGrid');
+    const paginationArea = document.getElementById('paginationArea');
+
+    if (term === "") {
+        // Agar search khali hai to wapis normal pagination par aa jao
+        renderProducts();
+        return;
+    }
+
+    // Poore products array mein filter lagana
+    const filtered = products.filter(p => 
+        (p.name && p.name.toLowerCase().includes(term)) || 
+        (getProductDescription(p).toLowerCase().includes(term))
+    );
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div style="text-align:center; grid-column:1/-1; padding:3rem;">
+                <i class="fas fa-search" style="font-size:3rem; color:var(--border); margin-bottom:1rem;"></i>
+                <p style="color:var(--text-muted);">Afsos! "${query}" ke naam se koi product nahi mila.</p>
+            </div>`;
+        paginationArea.classList.add('hidden');
+    } else {
+        // Filtered products ko dikhana (is mein pagination hide ho jayegi taake saare results nazar ayen)
+        renderFilteredResults(filtered);
+        paginationArea.classList.add('hidden'); 
+    }
+}
+
+// Filtered results ko render karne ke liye alag function
+function renderFilteredResults(filteredItems) {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = filteredItems.map(p => {
+        const images = p.images || [];
+        const fullDesc = getProductDescription(p);
+        const shortDesc = fullDesc.length > 70 ? fullDesc.substring(0, 70) + '...' : fullDesc;
+        
+        let galleryHtml = images.length > 0 ? 
+            `<div class="carousel-container" data-current="0">
+                <div class="carousel-images">${images.map(img => `<img src="${img}" loading="lazy">`).join('')}</div>
+                ${images.length > 1 ? `<button class="carousel-btn prev hidden" onclick="event.stopPropagation(); moveCarousel(this, -1, ${images.length})"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-btn next" onclick="event.stopPropagation(); moveCarousel(this, 1, ${images.length})"><i class="fas fa-chevron-right"></i></button>` : ''}
+            </div>` : `<img class="main-image" src="https://via.placeholder.com/300">`;
+
+        return `
+            <div class="product-card" onclick="openProductDetail('${p.firebaseId}')">
+                ${galleryHtml}
+                <div class="product-info">
+                    <div class="product-name">${escapeHtml(p.name)}</div>
+                    <div class="product-desc">${escapeHtml(shortDesc)}</div>
+                    <div class="market-price">₨ ${Number(p.marketPrice).toLocaleString()}</div>
+                    <button class="add-btn" onclick="event.stopPropagation(); addToCart('${p.firebaseId}')">Add to Bag</button>
+                </div>
+            </div>`;
+    }).join('');
+}
+
+// Event Listener ko replace karein
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    handleSearch(e.target.value);
+});
 
     loadData();
     loadCitiesForCustomer();
