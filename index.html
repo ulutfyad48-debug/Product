@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mart PK | Loading Experience</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Splash screen styles */
+        .splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .splash.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-container {
+            max-width: 500px;
+            width: 90%;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .image-slider {
+            width: 100%;
+            height: 200px;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            background: #0f172a;
+        }
+
+        .slider-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.5s;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .slider-img.active {
+            opacity: 1;
+        }
+
+        .progress-wrapper {
+            margin: 1.5rem 0;
+        }
+
+        .progress-percent {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar-bg {
+            background: #334155;
+            border-radius: 2rem;
+            height: 12px;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #10b981;
+            border-radius: 2rem;
+            transition: width 0.2s linear;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .badge {
+            background: rgba(16,185,129,0.15);
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .badge i {
+            margin-right: 5px;
+        }
+
+        .message {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        /* Hidden iframe (background preload) */
+        .preload-iframe {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+            top: -100px;
+            left: -100px;
+        }
+
+        /* Target iframe that becomes visible after loading */
+        .target-frame {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 999;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+
+        .target-frame.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            .loader-container { padding: 1.5rem 1rem; }
+            .logo { font-size: 2rem; }
+            .progress-percent { font-size: 1.5rem; }
+            .image-slider { height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash" class="splash">
+    <div class="loader-container">
+        <div class="logo">🛍️ Mart PK</div>
+        <div class="tagline">Premium Quality · Best Prices</div>
+
+        <div class="image-slider" id="imageSlider">
+            <img class="slider-img active" src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500&h=200&fit=crop" alt="Shopping">
+            <img class="slider-img" src="https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?w=500&h=200&fit=crop" alt="Delivery">
+            <img class="slider-img" src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=500&h=200&fit=crop" alt="Products">
+            <img class="slider-img" src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=500&h=200&fit=crop" alt="Shopping bag">
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="progress-percent" id="percent">0%</div>
+            <div class="progress-bar-bg">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="trust-badges">
+            <span class="badge"><i class="fas fa-shield-alt"></i> 100% Genuine</span>
+            <span class="badge"><i class="fas fa-truck"></i> Fast Delivery</span>
+            <span class="badge"><i class="fas fa-lock"></i> Secure Checkout</span>
+            <span class="badge"><i class="fas fa-undo-alt"></i> Easy Returns</span>
+        </div>
+
+        <div class="message">
+            <i class="fas fa-spinner fa-pulse"></i> Loading premium collection...
+        </div>
+    </div>
+</div>
+
+<!-- Hidden preload iframe (loads target site in background) -->
+<iframe id="preloadIframe" class="preload-iframe" src="https://ulutfyad48-debug.github.io/Product/customer.html"></iframe>
+
+<!-- Actual visible iframe that will replace splash -->
+<iframe id="targetFrame" class="target-frame" src="about:blank"></iframe>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script>
+    (function() {
+        const TARGET_URL = "https://ulutfyad48-debug.github.io/Product/customer.html";
+        const MIN_DURATION = 8000;  // Minimum splash duration: 8 seconds (aap chahe to 10-12 kar sakte hain)
+        
+        let splashStarted = Date.now();
+        let iframeLoaded = false;
+        let timerFinished = false;
+        
+        // Get elements
+        const splashDiv = document.getElementById('splash');
+        const preloadIframe = document.getElementById('preloadIframe');
+        const targetFrame = document.getElementById('targetFrame');
+        const percentEl = document.getElementById('percent');
+        const fillEl = document.getElementById('progressFill');
+        
+        // Image slider
+        let currentImageIndex = 0;
+        const images = document.querySelectorAll('.slider-img');
+        const totalImages = images.length;
+        
+        function rotateImage() {
+            images[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + 1) % totalImages;
+            images[currentImageIndex].classList.add('active');
+        }
+        const imageInterval = setInterval(rotateImage, 2500);
+        
+        // Progress animation (fake percentage to keep user engaged, but real condition is timer+iframe)
+        let progressValue = 0;
+        const progressInterval = setInterval(() => {
+            if (progressValue < 100) {
+                progressValue += 2; // smooth increment
+                if (progressValue > 100) progressValue = 100;
+                percentEl.innerText = Math.floor(progressValue) + '%';
+                fillEl.style.width = progressValue + '%';
+            }
+        }, 150);
+        
+        // When preload iframe finishes loading, mark it
+        preloadIframe.onload = function() {
+            iframeLoaded = true;
+            // Once preload iframe is loaded, we can copy its content to the visible iframe
+            try {
+                // Since same origin, we can get the HTML and write to target iframe
+                const doc = preloadIframe.contentDocument || preloadIframe.contentWindow.document;
+                const htmlContent = doc.documentElement.outerHTML;
+                targetFrame.contentDocument.open();
+                targetFrame.contentDocument.write(htmlContent);
+                targetFrame.contentDocument.close();
+                // Now target frame is fully loaded with the same state
+                console.log("Background loaded and transferred");
+            } catch(e) {
+                console.warn("Could not copy content, fallback to redirect", e);
+                // Fallback: just set target iframe src
+                targetFrame.src = TARGET_URL;
+            }
+            checkAndFinish();
+        };
+        
+        // If preload takes too long, still we wait for timer
+        function checkAndFinish() {
+            const elapsed = Date.now() - splashStarted;
+            if (elapsed >= MIN_DURATION && iframeLoaded) {
+                // Hide splash and show target frame
+                finishLoading();
+            } else if (elapsed >= MIN_DURATION && !iframeLoaded) {
+                // Timer finished but iframe not loaded yet, wait another 2 seconds max
+                setTimeout(() => {
+                    if (iframeLoaded) finishLoading();
+                    else finishLoading(); // force finish
+                }, 2000);
+            }
+        }
+        
+        function finishLoading() {
+            clearInterval(progressInterval);
+            clearInterval(imageInterval);
+            // Make target frame visible
+            targetFrame.classList.add('visible');
+            // Hide splash with fade
+            splashDiv.classList.add('hide');
+            // Remove preload iframe after a delay
+            setTimeout(() => {
+                preloadIframe.remove();
+                splashDiv.remove();
+            }, 600);
+        }
+        
+        // Timer that triggers check each second
+        let timerCheck = setInterval(() => {
+            const elapsed = Date.now() - splashStarted;
+            if (elapsed >= MIN_DURATION) {
+                clearInterval(timerCheck);
+                checkAndFinish();
+            }
+        }, 500);
+        
+        // Fallback: if something goes wrong, redirect after 12 seconds
+        setTimeout(() => {
+            if (!iframeLoaded && splashDiv.style.display !== 'none') {
+                window.location.href = TARGET_URL;
+            }
+        }, 15000);
+    })();
+</script>
+</body>
+</html>
