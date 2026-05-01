@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Mart PK | Reseller Portal - Fast Gallery & Smart Back</title>
+    <title>Mart PK | Reseller Portal - Back Closes Both Modals</title>
     <link rel="preconnect" href="https://firebasestorage.googleapis.com">
     <link rel="preconnect" href="https://www.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,7 +34,6 @@
         .wholesale-price{color:#1a6b42;font-weight:bold;font-size:1.1rem;margin-top:4px;}
         .description{color:#334155;font-size:0.85rem;margin:12px 0;line-height:1.45;background:#f9f9fc;padding:8px 12px;border-radius:14px;}
         .see-more-btn{background:none;border:none;color:#0f172a;font-weight:bold;cursor:pointer;margin-left:6px;font-size:0.8rem;text-decoration:underline;}
-        /* LIGHTBOX (with back button handling) */
         .lightbox-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:2000;visibility:hidden;backdrop-filter:blur(8px);}
         .lightbox-content{position:relative;max-width:90vw;max-height:90vh;background:#0f172a;border-radius:28px;padding:12px;box-shadow:0 25px 40px rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;}
         .lightbox-image-container{display:flex;justify-content:center;align-items:center;min-width:280px;min-height:280px;}
@@ -46,7 +45,6 @@
         .lb-close{position:absolute;top:12px;right:20px;background:rgba(0,0,0,0.6);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;color:white;transition:0.2s;}
         .lb-close:hover{background:#dc2626;transform:rotate(90deg);}
         .lb-counter{color:#cbd5e1;background:#0f172a99;padding:4px 12px;border-radius:40px;font-size:0.9rem;}
-        /* Description Modal */
         .desc-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1100;visibility:hidden;}
         .desc-modal-content{background:white;padding:1.8rem;border-radius:28px;max-width:550px;width:90%;max-height:80%;overflow-y:auto;box-shadow:0 20px 30px rgba(0,0,0,0.3);}
         .desc-modal-content h3{margin-bottom:12px;color:#0f172a;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
@@ -94,7 +92,7 @@
     </div>
 </div>
 
-<!-- Lightbox Gallery with Back Button Support -->
+<!-- Lightbox Gallery -->
 <div id="lightboxModal" class="lightbox-modal">
     <div class="lightbox-content">
         <div class="lb-close" id="closeLightboxBtn">&times;</div>
@@ -113,7 +111,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
-    // ---------- Firebase (unchanged) ----------
+    // ---------- Firebase config ----------
     const firebaseConfig = { databaseURL: "https://mart-c4baa-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
@@ -124,9 +122,8 @@
     // Lightbox state
     let currentLightboxImages = [];
     let currentLightboxIndex = 0;
-    let activeLightboxProductId = null;
 
-    // Helper functions
+    // Helper
     function showToast(msg){
         let toast = document.createElement('div');
         toast.className = 'toast-msg';
@@ -135,14 +132,13 @@
         setTimeout(()=>toast.remove(), 2500);
     }
 
-    // ----- Lightbox with History API (back button closes lightbox) -----
+    // ----- Lightbox with back support -----
     function openLightbox(productId, startIndex = 0) {
         const product = allProducts.find(p => p.id === productId);
         if (!product || !product.images || product.images.length === 0) {
             showToast("No images available");
             return;
         }
-        activeLightboxProductId = productId;
         currentLightboxImages = [...product.images];
         startIndex = Math.min(Math.max(0, startIndex), currentLightboxImages.length - 1);
         currentLightboxIndex = startIndex;
@@ -152,34 +148,22 @@
         modal.style.visibility = 'visible';
         document.body.style.overflow = 'hidden';
         
-        // Push a dummy state so that pressing back closes lightbox instead of navigating away
-        if (!window.lightboxHistoryPushed) {
-            history.pushState({ lightboxOpen: true }, '');
+        if (!window.lightboxHistoryPushed && !window.descHistoryPushed) {
+            history.pushState({ modal: 'lightbox' }, '');
             window.lightboxHistoryPushed = true;
         }
     }
-
     function updateLightboxImage() {
         const imgElem = document.getElementById('lightboxImg');
         if (currentLightboxImages.length && currentLightboxImages[currentLightboxIndex]) {
             imgElem.src = currentLightboxImages[currentLightboxIndex];
-            imgElem.alt = "product view";
             document.getElementById('imageCounter').innerText = `${currentLightboxIndex+1} / ${currentLightboxImages.length}`;
         }
     }
-
-    function nextLightboxImage() {
-        if (currentLightboxImages.length === 0) return;
-        currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
-        updateLightboxImage();
-    }
-    function prevLightboxImage() {
-        if (currentLightboxImages.length === 0) return;
-        currentLightboxIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
-        updateLightboxImage();
-    }
+    function nextLightboxImage() { if(currentLightboxImages.length) currentLightboxIndex = (currentLightboxIndex+1)%currentLightboxImages.length; updateLightboxImage(); }
+    function prevLightboxImage() { if(currentLightboxImages.length) currentLightboxIndex = (currentLightboxIndex-1+currentLightboxImages.length)%currentLightboxImages.length; updateLightboxImage(); }
     function downloadCurrentImage() {
-        if (currentLightboxImages.length && currentLightboxImages[currentLightboxIndex]) {
+        if(currentLightboxImages[currentLightboxIndex]){
             const link = document.createElement('a');
             link.href = currentLightboxImages[currentLightboxIndex];
             link.download = `mart_image_${Date.now()}.jpg`;
@@ -192,42 +176,74 @@
     }
     function closeLightbox() {
         const modal = document.getElementById('lightboxModal');
-        if (modal.style.visibility !== 'visible') return;
+        if(modal.style.visibility !== 'visible') return;
         modal.style.visibility = 'hidden';
         document.body.style.overflow = '';
-        activeLightboxProductId = null;
-        currentLightboxImages = [];
-        
-        // Remove the history state so back button works normally after closing
-        if (window.lightboxHistoryPushed) {
-            history.back(); // revert to previous state
+        if(window.lightboxHistoryPushed){
+            history.back();
             window.lightboxHistoryPushed = false;
         }
     }
 
-    // Handle browser back button (popstate)
-    window.addEventListener('popstate', function(event) {
-        const modal = document.getElementById('lightboxModal');
-        if (modal.style.visibility === 'visible') {
+    // ----- Description Modal with back support -----
+    function openDescriptionModal(productId) {
+        const product = allProducts.find(p => p.id === productId);
+        if(!product){
+            showToast("Product not found");
+            return;
+        }
+        const title = product.name || "Product";
+        let description = product.description || product.desc || product.productDescription || product.details || "";
+        if(!description.trim()) description = "📄 No description available for this product.";
+        
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalDesc').innerText = description;
+        window.currentModalTitle = title;
+        window.currentModalDesc = description;
+        const modal = document.getElementById('descModal');
+        modal.style.visibility = 'visible';
+        
+        // Push history state only if no other modal is open
+        if (!window.lightboxHistoryPushed && !window.descHistoryPushed) {
+            history.pushState({ modal: 'desc' }, '');
+            window.descHistoryPushed = true;
+        }
+    }
+    function closeDescriptionModal() {
+        const modal = document.getElementById('descModal');
+        if(modal.style.visibility !== 'visible') return;
+        modal.style.visibility = 'hidden';
+        if(window.descHistoryPushed){
+            history.back();
+            window.descHistoryPushed = false;
+        }
+    }
+    window.closeDescriptionModal = closeDescriptionModal;
+
+    // Global popstate handler: closes whichever modal is open
+    window.addEventListener('popstate', function(e) {
+        const lightbox = document.getElementById('lightboxModal');
+        const desc = document.getElementById('descModal');
+        if (lightbox.style.visibility === 'visible') {
             closeLightbox();
-            event.preventDefault();
+            e.preventDefault();
+        } else if (desc.style.visibility === 'visible') {
+            closeDescriptionModal();
+            e.preventDefault();
         }
     });
 
-    // ----- Description modal with copy title/desc -----
-    let currentModalProductTitle = '', currentModalProductDesc = '';
-    window.showDescriptionModal = function(title, desc) {
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDesc').innerText = desc;
-        currentModalProductTitle = title;
-        currentModalProductDesc = desc;
-        document.getElementById('descModal').style.visibility = 'visible';
+    // Copy functionality for description modal
+    document.getElementById('copyTitleBtn').onclick = () => {
+        if(window.currentModalTitle) navigator.clipboard.writeText(window.currentModalTitle);
+        showToast("✅ Title copied");
     };
-    window.closeDescriptionModal = function(){
-        document.getElementById('descModal').style.visibility = 'hidden';
+    document.getElementById('copyDescBtn').onclick = () => {
+        if(window.currentModalDesc) navigator.clipboard.writeText(window.currentModalDesc);
+        showToast("📋 Description copied");
     };
-    
-    // ----- Load Products from Firebase (exactly same logic, only added lazy loading) -----
+
+    // ----- Load Products from Firebase (unchanged) -----
     async function loadData(){
         const [prodSnap, catSnap] = await Promise.all([
             db.ref('products').once('value'),
@@ -265,9 +281,7 @@
             if(fullDescription && fullDescription.trim() !== ''){
                 const shortDesc = fullDescription.length > 110 ? fullDescription.substring(0,110)+'...' : fullDescription;
                 descHtml = escapeHtml(shortDesc);
-                const safeTitle = escapeHtml(prod.name).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
-                const safeDesc = fullDescription.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
-                seeMoreHtml = `<button class="see-more-btn" onclick="showDescriptionModal('${safeTitle}', \`${safeDesc}\`)">See More</button>`;
+                seeMoreHtml = `<button class="see-more-btn" onclick="openDescriptionModal('${prod.id}')">See More</button>`;
             } else {
                 descHtml = '📄 No description';
                 seeMoreHtml = '';
@@ -312,7 +326,7 @@
         container.innerHTML = html;
     }
 
-    // Global helper functions for copy & download
+    // Global helpers
     window.copyProductName = function(name){
         navigator.clipboard.writeText(name).then(()=> showToast("✅ Product name copied!"));
     };
@@ -326,13 +340,14 @@
         document.body.removeChild(link);
         showToast("⬇️ Download started");
     };
-    window.openLightbox = openLightbox; // expose for onclick
+    window.openLightbox = openLightbox;
+    window.openDescriptionModal = openDescriptionModal;
 
     // Filter listeners
     document.getElementById('searchInput').addEventListener('input', (e)=>{ currentSearch=e.target.value; renderProducts(); });
     document.getElementById('categoryFilter').addEventListener('change', (e)=>{ currentCategory=e.target.value; renderProducts(); });
 
-    // Wholesale password logic (unchanged)
+    // Wholesale password (unchanged)
     const pwdModal = document.getElementById('passwordModal');
     document.getElementById('showWholesaleBtn').onclick = ()=>{ pwdModal.style.visibility = 'visible'; };
     document.getElementById('closeModalBtn').onclick = ()=>{ pwdModal.style.visibility = 'hidden'; document.getElementById('wholesalePassword').value=''; document.getElementById('pwdError').innerText=''; };
@@ -349,25 +364,13 @@
     };
 
     // Bind lightbox controls
-    document.getElementById('prevImageBtn').onclick = () => prevLightboxImage();
-    document.getElementById('nextImageBtn').onclick = () => nextLightboxImage();
-    document.getElementById('closeLightboxBtn').onclick = () => closeLightbox();
-    document.getElementById('downloadCurrentBtn').onclick = () => downloadCurrentImage();
-    document.getElementById('lightboxModal').addEventListener('click', (e) => {
-        if(e.target === document.getElementById('lightboxModal')) closeLightbox();
-    });
-    
-    // Bind description modal copy buttons
-    document.getElementById('copyTitleBtn').onclick = () => {
-        if(currentModalProductTitle) navigator.clipboard.writeText(currentModalProductTitle);
-        showToast("Title copied");
-    };
-    document.getElementById('copyDescBtn').onclick = () => {
-        if(currentModalProductDesc) navigator.clipboard.writeText(currentModalProductDesc);
-        showToast("Description copied");
-    };
+    document.getElementById('prevImageBtn').onclick = prevLightboxImage;
+    document.getElementById('nextImageBtn').onclick = nextLightboxImage;
+    document.getElementById('closeLightboxBtn').onclick = closeLightbox;
+    document.getElementById('downloadCurrentBtn').onclick = downloadCurrentImage;
+    document.getElementById('lightboxModal').addEventListener('click', (e) => { if(e.target === document.getElementById('lightboxModal')) closeLightbox(); });
 
-    // Initialize
+    // Start
     loadData();
 </script>
 </body>
