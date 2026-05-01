@@ -2,83 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mart PK | Reseller Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Mart PK | Reseller Portal - Fast Gallery & Smart Back</title>
+    <link rel="preconnect" href="https://firebasestorage.googleapis.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{background:#f4f6f9;font-family:'Segoe UI',sans-serif;padding:20px;}
-        .container{max-width:1200px;margin:auto;}
-        h1{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
-        .btn-password{background:#0f172a;color:white;border:none;padding:6px 15px;border-radius:2rem;cursor:pointer;}
-        .filters{margin:1rem 0;display:flex;gap:10px;flex-wrap:wrap;}
-        .filters input,.filters select{padding:8px;border-radius:2rem;border:1px solid #ccc;}
-        .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
-        .product-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;flex-direction:column;}
-        .image-gallery{display:flex;overflow-x:auto;gap:8px;padding:12px;background:#f8f9fa;border-bottom:1px solid #eee;}
-        .gallery-item{text-align:center;min-width:80px;}
-        .gallery-item img{width:70px;height:70px;object-fit:cover;border-radius:6px;cursor:pointer;border:1px solid #ddd;}
-        .gallery-item button{background:#0f172a;color:white;border:none;font-size:10px;border-radius:20px;padding:4px 6px;margin-top:4px;cursor:pointer;width:100%;}
-        .product-info{padding:12px;flex:1;}
-        .wholesale-price{color:#1a6b42;font-weight:bold;display:none;}
-        .market-price{font-weight:bold;}
-        .description{color:#444;font-size:0.9rem;margin:8px 0;line-height:1.4;}
-        .see-more-btn{background:none;border:none;color:#0f172a;font-weight:bold;cursor:pointer;margin-left:4px;}
-        .password-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;}
-        .modal-box{background:white;padding:2rem;border-radius:1rem;text-align:center;min-width:280px;}
-        .modal-box input{padding:8px;margin:10px 0;border:1px solid #ccc;border-radius:2rem;width:100%;}
-        .modal-box button{margin:5px;}
-        /* Description modal */
+        body{background:#f4f6f9;font-family:'Segoe UI',system-ui,sans-serif;padding:20px;}
+        .container{max-width:1400px;margin:auto;}
+        h1{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;color:#0f172a;}
+        .btn-password{background:#0f172a;color:white;border:none;padding:8px 18px;border-radius:2rem;cursor:pointer;font-weight:600;transition:0.2s;}
+        .btn-password:hover{background:#1e293b;transform:scale(0.97);}
+        .filters{margin:1.5rem 0;display:flex;gap:12px;flex-wrap:wrap;}
+        .filters input,.filters select{padding:10px 18px;border-radius:2rem;border:1px solid #ccc;background:white;font-size:0.9rem;outline:none;}
+        .filters input:focus,.filters select:focus{border-color:#0f172a;box-shadow:0 0 0 2px rgba(15,23,42,0.2);}
+        .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px;}
+        .product-card{background:white;border-radius:20px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.05);transition:0.25s ease;display:flex;flex-direction:column;}
+        .product-card:hover{transform:translateY(-5px);box-shadow:0 15px 30px rgba(0,0,0,0.1);}
+        .image-gallery{display:flex;overflow-x:auto;gap:12px;padding:16px;background:#f8fafd;border-bottom:1px solid #e9eef3;scrollbar-width:thin;}
+        .gallery-item{text-align:center;min-width:85px;cursor:pointer;}
+        .gallery-item img{width:80px;height:80px;object-fit:cover;border-radius:12px;border:2px solid transparent;box-shadow:0 2px 6px rgba(0,0,0,0.1);transition:0.2s;}
+        .gallery-item img:hover{border-color:#0f172a;transform:scale(1.02);}
+        .gallery-item button{background:#0f172a;color:white;border:none;font-size:11px;border-radius:30px;padding:5px 8px;margin-top:6px;cursor:pointer;width:100%;font-weight:500;}
+        .gallery-item button:hover{background:#2d3a5e;}
+        .product-info{padding:18px;flex:1;}
+        .product-info h3{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:1.2rem;margin-bottom:6px;}
+        .copy-title-icon{background:#eef2ff;padding:5px 8px;border-radius:40px;font-size:12px;cursor:pointer;transition:0.2s;color:#0f172a;}
+        .copy-title-icon:hover{background:#0f172a;color:white;}
+        .market-price{font-weight:700;font-size:1.2rem;color:#0f172a;}
+        .wholesale-price{color:#1a6b42;font-weight:bold;font-size:1.1rem;margin-top:4px;}
+        .description{color:#334155;font-size:0.85rem;margin:12px 0;line-height:1.45;background:#f9f9fc;padding:8px 12px;border-radius:14px;}
+        .see-more-btn{background:none;border:none;color:#0f172a;font-weight:bold;cursor:pointer;margin-left:6px;font-size:0.8rem;text-decoration:underline;}
+        /* LIGHTBOX (with back button handling) */
+        .lightbox-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;z-index:2000;visibility:hidden;backdrop-filter:blur(8px);}
+        .lightbox-content{position:relative;max-width:90vw;max-height:90vh;background:#0f172a;border-radius:28px;padding:12px;box-shadow:0 25px 40px rgba(0,0,0,0.4);display:flex;flex-direction:column;align-items:center;}
+        .lightbox-image-container{display:flex;justify-content:center;align-items:center;min-width:280px;min-height:280px;}
+        .lightbox-img{max-width:80vw;max-height:70vh;object-fit:contain;border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+        .lb-controls{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:20px;gap:20px;}
+        .lb-btn{background:rgba(30,41,59,0.9);border:none;color:white;font-size:1.8rem;width:50px;height:50px;border-radius:60px;cursor:pointer;transition:0.2s;display:inline-flex;align-items:center;justify-content:center;}
+        .lb-btn:hover{background:#10b981;transform:scale(1.05);}
+        .lb-download{background:#1e293b;font-size:1.3rem;}
+        .lb-close{position:absolute;top:12px;right:20px;background:rgba(0,0,0,0.6);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer;color:white;transition:0.2s;}
+        .lb-close:hover{background:#dc2626;transform:rotate(90deg);}
+        .lb-counter{color:#cbd5e1;background:#0f172a99;padding:4px 12px;border-radius:40px;font-size:0.9rem;}
+        /* Description Modal */
         .desc-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1100;visibility:hidden;}
-        .desc-modal-content{background:white;padding:1.5rem;border-radius:12px;max-width:500px;width:90%;max-height:80%;overflow-y:auto;}
-        .desc-modal-content h3{margin-bottom:12px;color:#0f172a;}
-        .desc-modal-content p{line-height:1.5;color:#333;white-space:pre-wrap;margin-bottom:15px;}
-        .close-desc{float:right;font-size:1.5rem;cursor:pointer;}
-        .copy-desc-btn{background:#0f172a;color:white;border:none;padding:8px 12px;border-radius:2rem;cursor:pointer;margin-top:10px;width:100%;}
-        .toast-msg{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f172a;color:white;padding:8px 16px;border-radius:20px;z-index:1200;font-size:14px;}
+        .desc-modal-content{background:white;padding:1.8rem;border-radius:28px;max-width:550px;width:90%;max-height:80%;overflow-y:auto;box-shadow:0 20px 30px rgba(0,0,0,0.3);}
+        .desc-modal-content h3{margin-bottom:12px;color:#0f172a;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+        .copy-buttons{display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap;}
+        .copy-btn-sm{background:#0f172a;color:white;border:none;padding:8px 16px;border-radius:40px;cursor:pointer;font-size:0.8rem;transition:0.2s;}
+        .copy-btn-sm:hover{background:#10b981;}
+        .desc-modal-content p{line-height:1.55;color:#1e293b;white-space:pre-wrap;margin-top:8px;}
+        .close-desc{float:right;font-size:1.8rem;cursor:pointer;line-height:1;margin-left:12px;}
+        .toast-msg{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#0f172a;color:white;padding:10px 24px;border-radius:40px;z-index:3000;font-size:14px;box-shadow:0 6px 14px rgba(0,0,0,0.2);font-weight:500;}
+        @media (max-width:640px){.products-grid{grid-template-columns:1fr;}.lb-btn{width:42px;height:42px;font-size:1.4rem;}}
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Mart PK - Reseller <button id="showWholesaleBtn" class="btn-password"><i class="fas fa-lock"></i> Show Wholesale Prices</button></h1>
+    <h1>🛒 Mart PK · Reseller Hub 
+        <button id="showWholesaleBtn" class="btn-password"><i class="fas fa-lock"></i> Show Wholesale Prices</button>
+    </h1>
     <div class="filters">
-        <input type="text" id="searchInput" placeholder="Search products...">
+        <input type="text" id="searchInput" placeholder="🔍 Search products...">
         <select id="categoryFilter"></select>
     </div>
-    <div id="productsContainer" class="products-grid"><div style="text-align:center;padding:50px;">Loading products...</div></div>
+    <div id="productsContainer" class="products-grid"><div style="text-align:center;padding:50px;">Loading premium inventory...</div></div>
 </div>
 
 <!-- Password Modal -->
-<div id="passwordModal" class="password-modal">
-    <div class="modal-box">
-        <h3>Enter Password for Wholesale Prices</h3>
-        <input type="password" id="wholesalePassword" placeholder="Password">
+<div id="passwordModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;visibility:hidden;">
+    <div style="background:white;padding:2rem;border-radius:1rem;text-align:center;min-width:280px;">
+        <h3>🔐 Wholesale Access</h3>
+        <input type="password" id="wholesalePassword" placeholder="Password" style="padding:8px;margin:10px 0;border:1px solid #ccc;border-radius:2rem;width:100%;">
         <div><button id="submitPasswordBtn" class="btn-password">Submit</button> <button id="closeModalBtn" class="btn-password" style="background:#475569;">Cancel</button></div>
         <div id="pwdError" style="color:red;margin-top:5px;"></div>
     </div>
 </div>
 
-<!-- Description Modal with Copy Button -->
+<!-- Description Modal -->
 <div id="descModal" class="desc-modal">
     <div class="desc-modal-content">
         <span class="close-desc" onclick="closeDescriptionModal()">&times;</span>
-        <h3 id="modalTitle">Description</h3>
+        <h3 id="modalTitle">Product Details</h3>
+        <div class="copy-buttons">
+            <button class="copy-btn-sm" id="copyTitleBtn"><i class="fas fa-copy"></i> Copy Product Name</button>
+            <button class="copy-btn-sm" id="copyDescBtn"><i class="fas fa-file-alt"></i> Copy Description</button>
+        </div>
         <p id="modalDesc"></p>
-        <button class="copy-desc-btn" onclick="copyDescription()"><i class="fas fa-copy"></i> Copy Description</button>
+    </div>
+</div>
+
+<!-- Lightbox Gallery with Back Button Support -->
+<div id="lightboxModal" class="lightbox-modal">
+    <div class="lightbox-content">
+        <div class="lb-close" id="closeLightboxBtn">&times;</div>
+        <div class="lightbox-image-container">
+            <img id="lightboxImg" class="lightbox-img" alt="preview">
+        </div>
+        <div class="lb-controls">
+            <button class="lb-btn" id="prevImageBtn"><i class="fas fa-chevron-left"></i></button>
+            <span id="imageCounter" class="lb-counter">1 / 1</span>
+            <button class="lb-btn lb-download" id="downloadCurrentBtn"><i class="fas fa-download"></i></button>
+            <button class="lb-btn" id="nextImageBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
+    // ---------- Firebase (unchanged) ----------
     const firebaseConfig = { databaseURL: "https://mart-c4baa-default-rtdb.firebaseio.com/" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     let allProducts = [], categories = [], showWholesale = false;
     let currentSearch = '', currentCategory = 'all';
-    let currentDescriptionText = '';
 
+    // Lightbox state
+    let currentLightboxImages = [];
+    let currentLightboxIndex = 0;
+    let activeLightboxProductId = null;
+
+    // Helper functions
     function showToast(msg){
         let toast = document.createElement('div');
         toast.className = 'toast-msg';
@@ -87,6 +135,99 @@
         setTimeout(()=>toast.remove(), 2500);
     }
 
+    // ----- Lightbox with History API (back button closes lightbox) -----
+    function openLightbox(productId, startIndex = 0) {
+        const product = allProducts.find(p => p.id === productId);
+        if (!product || !product.images || product.images.length === 0) {
+            showToast("No images available");
+            return;
+        }
+        activeLightboxProductId = productId;
+        currentLightboxImages = [...product.images];
+        startIndex = Math.min(Math.max(0, startIndex), currentLightboxImages.length - 1);
+        currentLightboxIndex = startIndex;
+        updateLightboxImage();
+        
+        const modal = document.getElementById('lightboxModal');
+        modal.style.visibility = 'visible';
+        document.body.style.overflow = 'hidden';
+        
+        // Push a dummy state so that pressing back closes lightbox instead of navigating away
+        if (!window.lightboxHistoryPushed) {
+            history.pushState({ lightboxOpen: true }, '');
+            window.lightboxHistoryPushed = true;
+        }
+    }
+
+    function updateLightboxImage() {
+        const imgElem = document.getElementById('lightboxImg');
+        if (currentLightboxImages.length && currentLightboxImages[currentLightboxIndex]) {
+            imgElem.src = currentLightboxImages[currentLightboxIndex];
+            imgElem.alt = "product view";
+            document.getElementById('imageCounter').innerText = `${currentLightboxIndex+1} / ${currentLightboxImages.length}`;
+        }
+    }
+
+    function nextLightboxImage() {
+        if (currentLightboxImages.length === 0) return;
+        currentLightboxIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
+        updateLightboxImage();
+    }
+    function prevLightboxImage() {
+        if (currentLightboxImages.length === 0) return;
+        currentLightboxIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
+        updateLightboxImage();
+    }
+    function downloadCurrentImage() {
+        if (currentLightboxImages.length && currentLightboxImages[currentLightboxIndex]) {
+            const link = document.createElement('a');
+            link.href = currentLightboxImages[currentLightboxIndex];
+            link.download = `mart_image_${Date.now()}.jpg`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("⬇️ Download started");
+        }
+    }
+    function closeLightbox() {
+        const modal = document.getElementById('lightboxModal');
+        if (modal.style.visibility !== 'visible') return;
+        modal.style.visibility = 'hidden';
+        document.body.style.overflow = '';
+        activeLightboxProductId = null;
+        currentLightboxImages = [];
+        
+        // Remove the history state so back button works normally after closing
+        if (window.lightboxHistoryPushed) {
+            history.back(); // revert to previous state
+            window.lightboxHistoryPushed = false;
+        }
+    }
+
+    // Handle browser back button (popstate)
+    window.addEventListener('popstate', function(event) {
+        const modal = document.getElementById('lightboxModal');
+        if (modal.style.visibility === 'visible') {
+            closeLightbox();
+            event.preventDefault();
+        }
+    });
+
+    // ----- Description modal with copy title/desc -----
+    let currentModalProductTitle = '', currentModalProductDesc = '';
+    window.showDescriptionModal = function(title, desc) {
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalDesc').innerText = desc;
+        currentModalProductTitle = title;
+        currentModalProductDesc = desc;
+        document.getElementById('descModal').style.visibility = 'visible';
+    };
+    window.closeDescriptionModal = function(){
+        document.getElementById('descModal').style.visibility = 'hidden';
+    };
+    
+    // ----- Load Products from Firebase (exactly same logic, only added lazy loading) -----
     async function loadData(){
         const [prodSnap, catSnap] = await Promise.all([
             db.ref('products').once('value'),
@@ -98,7 +239,7 @@
         if(catSnap.val()){
             categories = Object.entries(catSnap.val()).map(([k,cat])=>({key:k, name:cat.name}));
             const catFilter = document.getElementById('categoryFilter');
-            catFilter.innerHTML = '<option value="all">All Categories</option>';
+            catFilter.innerHTML = '<option value="all">📁 All Categories</option>';
             categories.forEach(c=>catFilter.innerHTML+=`<option value="${c.key}">${escapeHtml(c.name)}</option>`);
         }
         renderProducts();
@@ -108,86 +249,58 @@
         return product.description || product.desc || product.productDescription || product.details || '';
     }
 
-    // Show modal with full description and store text for copy
-    window.showDescriptionModal = function(title, desc){
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalDesc').innerText = desc;
-        currentDescriptionText = desc;
-        document.getElementById('descModal').style.visibility = 'visible';
-    };
-
-    window.copyDescription = function(){
-        if(currentDescriptionText){
-            navigator.clipboard.writeText(currentDescriptionText).then(() => {
-                showToast('✅ Description copied to clipboard!');
-            }).catch(() => {
-                showToast('❌ Failed to copy. Select text manually.');
-            });
-        }
-    };
-
-    window.closeDescriptionModal = function(){
-        document.getElementById('descModal').style.visibility = 'hidden';
-    };
-
-    // Image download: open in new tab
-    window.downloadSingleImage = function(url){
-        window.open(url, '_blank');
-    };
+    function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
     function renderProducts(){
         let filtered = allProducts;
         if(currentCategory !== 'all') filtered = filtered.filter(p=>p.categoryKey === currentCategory);
         if(currentSearch.trim()) filtered = filtered.filter(p=>p.name.toLowerCase().includes(currentSearch.toLowerCase()));
         const container = document.getElementById('productsContainer');
-        if(filtered.length===0){ container.innerHTML='<p>No products found</p>'; return; }
+        if(filtered.length===0){ container.innerHTML='<div style="text-align:center;padding:40px;">✨ No products match ✨</div>'; return; }
         let html = '';
         filtered.forEach(prod => {
             const catName = categories.find(c=>c.key===prod.categoryKey)?.name||'';
             const fullDescription = getDescription(prod);
-            
-            // If no description, show placeholder and no See More
-            let descHtml = '';
-            let seeMoreHtml = '';
+            let descHtml = '', seeMoreHtml = '';
             if(fullDescription && fullDescription.trim() !== ''){
-                const shortDesc = fullDescription.length > 100 ? fullDescription.substring(0,100)+'...' : fullDescription;
+                const shortDesc = fullDescription.length > 110 ? fullDescription.substring(0,110)+'...' : fullDescription;
                 descHtml = escapeHtml(shortDesc);
-                // Always show See More button if description exists
-                const safeTitle = escapeHtml(prod.name).replace(/'/g, "\\'");
-                // Properly escape for onclick with backticks
+                const safeTitle = escapeHtml(prod.name).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
                 const safeDesc = fullDescription.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$');
                 seeMoreHtml = `<button class="see-more-btn" onclick="showDescriptionModal('${safeTitle}', \`${safeDesc}\`)">See More</button>`;
             } else {
-                descHtml = 'No description available.';
+                descHtml = '📄 No description';
                 seeMoreHtml = '';
             }
-
             const images = prod.images || [];
-            let galleryHtml = '';
+            let galleryHtml = `<div class="image-gallery">`;
             if(images.length){
-                galleryHtml = `<div class="image-gallery">`;
                 images.forEach((img, idx)=>{
-                    const safeImg = img.replace(/'/g, "\\'");
+                    const safeImg = escapeHtml(img);
                     galleryHtml += `
                         <div class="gallery-item">
-                            <img src="${safeImg}" onclick="openFullImage('${safeImg}')" onerror="this.src='https://placehold.co/70x70'">
-                            <button onclick="downloadSingleImage('${safeImg}')"><i class="fas fa-download"></i></button>
+                            <img src="${safeImg}" loading="lazy" onclick="openLightbox('${prod.id}', ${idx})" onerror="this.src='https://placehold.co/80x80?text=Error'">
+                            <button onclick="event.stopPropagation(); downloadSingleImage('${safeImg}')"><i class="fas fa-download"></i> Save</button>
                         </div>
                     `;
                 });
-                galleryHtml += `</div>`;
             } else {
-                galleryHtml = `<div class="image-gallery"><div class="gallery-item"><img src="https://placehold.co/400x200?text=No+Image"></div></div>`;
+                galleryHtml += `<div class="gallery-item"><img src="https://placehold.co/400x200?text=No+Image" loading="lazy"></div>`;
             }
-
+            galleryHtml += `</div>`;
+            const productNameRaw = escapeHtml(prod.name);
             html += `
                 <div class="product-card">
                     ${galleryHtml}
                     <div class="product-info">
-                        <h3>${escapeHtml(prod.name)}</h3>
-                        <div class="market-price">Market: Rs. ${prod.marketPrice?.toLocaleString()}</div>
-                        <div class="wholesale-price" style="display:${showWholesale?'block':'none'}">Wholesale: Rs. ${prod.wholesalePrice?.toLocaleString()}</div>
-                        <div>Weight: ${prod.weight || 0} KG | ${escapeHtml(catName)}</div>
+                        <h3>${productNameRaw} 
+                            <span class="copy-title-icon" onclick="event.stopPropagation(); copyProductName('${productNameRaw.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-copy"></i> Copy
+                            </span>
+                        </h3>
+                        <div class="market-price">💰 Market: Rs. ${prod.marketPrice?.toLocaleString()}</div>
+                        <div class="wholesale-price" style="display:${showWholesale?'block':'none'}">🏷️ Wholesale: Rs. ${prod.wholesalePrice?.toLocaleString()}</div>
+                        <div>⚖️ Weight: ${prod.weight || 0} KG | 📂 ${escapeHtml(catName)}</div>
                         <div class="description">
                             ${descHtml}
                             ${seeMoreHtml}
@@ -199,40 +312,62 @@
         container.innerHTML = html;
     }
 
-    window.openFullImage = function(src){
-        const modalDiv = document.createElement('div');
-        modalDiv.style.position='fixed'; modalDiv.style.top=0; modalDiv.style.left=0;
-        modalDiv.style.width='100%'; modalDiv.style.height='100%'; modalDiv.style.background='rgba(0,0,0,0.8)';
-        modalDiv.style.display='flex'; modalDiv.style.alignItems='center'; modalDiv.style.justifyContent='center';
-        modalDiv.style.zIndex=2000; modalDiv.onclick=()=>modalDiv.remove();
-        const img = document.createElement('img');
-        img.src=src; img.style.maxWidth='90%'; img.style.maxHeight='90%'; img.style.borderRadius='8px';
-        modalDiv.appendChild(img);
-        document.body.appendChild(modalDiv);
+    // Global helper functions for copy & download
+    window.copyProductName = function(name){
+        navigator.clipboard.writeText(name).then(()=> showToast("✅ Product name copied!"));
     };
+    window.downloadSingleImage = function(url){
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `mart_image_${Date.now()}.jpg`;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast("⬇️ Download started");
+    };
+    window.openLightbox = openLightbox; // expose for onclick
 
-    // Search & filter
+    // Filter listeners
     document.getElementById('searchInput').addEventListener('input', (e)=>{ currentSearch=e.target.value; renderProducts(); });
     document.getElementById('categoryFilter').addEventListener('change', (e)=>{ currentCategory=e.target.value; renderProducts(); });
 
-    // Password logic
-    const modal = document.getElementById('passwordModal');
-    document.getElementById('showWholesaleBtn').onclick = ()=>{ modal.style.visibility = 'visible'; };
-    document.getElementById('closeModalBtn').onclick = ()=>{ modal.style.visibility = 'hidden'; document.getElementById('wholesalePassword').value=''; document.getElementById('pwdError').innerText=''; };
+    // Wholesale password logic (unchanged)
+    const pwdModal = document.getElementById('passwordModal');
+    document.getElementById('showWholesaleBtn').onclick = ()=>{ pwdModal.style.visibility = 'visible'; };
+    document.getElementById('closeModalBtn').onclick = ()=>{ pwdModal.style.visibility = 'hidden'; document.getElementById('wholesalePassword').value=''; document.getElementById('pwdError').innerText=''; };
     document.getElementById('submitPasswordBtn').onclick = ()=>{
         let pwd = document.getElementById('wholesalePassword').value;
         if(pwd === 's8'){
             showWholesale = true;
             renderProducts();
-            modal.style.visibility = 'hidden';
-            document.getElementById('showWholesaleBtn').innerHTML = '<i class="fas fa-eye"></i> Wholesale Prices Visible';
+            pwdModal.style.visibility = 'hidden';
+            document.getElementById('showWholesaleBtn').innerHTML = '<i class="fas fa-eye"></i> Wholesale Prices Active';
         } else {
             document.getElementById('pwdError').innerText = 'Incorrect password';
         }
     };
 
-    function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    // Bind lightbox controls
+    document.getElementById('prevImageBtn').onclick = () => prevLightboxImage();
+    document.getElementById('nextImageBtn').onclick = () => nextLightboxImage();
+    document.getElementById('closeLightboxBtn').onclick = () => closeLightbox();
+    document.getElementById('downloadCurrentBtn').onclick = () => downloadCurrentImage();
+    document.getElementById('lightboxModal').addEventListener('click', (e) => {
+        if(e.target === document.getElementById('lightboxModal')) closeLightbox();
+    });
+    
+    // Bind description modal copy buttons
+    document.getElementById('copyTitleBtn').onclick = () => {
+        if(currentModalProductTitle) navigator.clipboard.writeText(currentModalProductTitle);
+        showToast("Title copied");
+    };
+    document.getElementById('copyDescBtn').onclick = () => {
+        if(currentModalProductDesc) navigator.clipboard.writeText(currentModalProductDesc);
+        showToast("Description copied");
+    };
 
+    // Initialize
     loadData();
 </script>
 </body>
